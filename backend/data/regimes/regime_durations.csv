@@ -1,0 +1,5 @@
+regime,avg_duration,max_duration,num_periods
+calm,8.56,29,9
+credit_stress,2.95,11,19
+crisis,5.25,18,8
+inflation_stress,7.36,37,14

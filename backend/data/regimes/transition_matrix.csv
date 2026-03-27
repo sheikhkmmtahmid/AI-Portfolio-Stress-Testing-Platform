@@ -1,0 +1,5 @@
+from_regime,calm,credit_stress,crisis,inflation_stress
+calm,0.8831,0.0649,0.026,0.026
+credit_stress,0.0909,0.6727,0.0364,0.2
+crisis,0.0952,0.0714,0.8095,0.0238
+inflation_stress,0.0,0.1068,0.0291,0.8641

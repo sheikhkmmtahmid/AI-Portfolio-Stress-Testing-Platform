@@ -1,0 +1,5 @@
+regime,stay_probability,total_observations
+crisis,0.8095,42
+calm,0.8831,77
+inflation_stress,0.8641,103
+credit_stress,0.6727,55
