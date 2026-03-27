@@ -1,0 +1,49 @@
+{
+  "gmm": {
+    "train": {
+      "n_clusters_found": 5,
+      "silhouette_score": 0.29050756550947926,
+      "calinski_harabasz_score": 80.57586222220549,
+      "davies_bouldin_score": 1.3007580413250106
+    },
+    "validation": {
+      "n_clusters_found": 3,
+      "silhouette_score": 0.2529152559493514,
+      "calinski_harabasz_score": 17.546367231047853,
+      "davies_bouldin_score": 1.1646161301328484
+    },
+    "test": {
+      "n_clusters_found": 3,
+      "silhouette_score": 0.1743581777930995,
+      "calinski_harabasz_score": 19.28718712010271,
+      "davies_bouldin_score": 1.578837230256192
+    },
+    "bic_train": 2091.887991427112,
+    "aic_train": 1752.0307428845256,
+    "converged": true,
+    "n_iter": 21,
+    "lower_bound": -3.9795037402902995
+  },
+  "kmeans": {
+    "train": {
+      "n_clusters_found": 5,
+      "silhouette_score": 0.33556388448043567,
+      "calinski_harabasz_score": 98.05410378471056,
+      "davies_bouldin_score": 1.0685484333187918
+    },
+    "validation": {
+      "n_clusters_found": 5,
+      "silhouette_score": 0.188062231285276,
+      "calinski_harabasz_score": 18.385286621434105,
+      "davies_bouldin_score": 1.0576371358358554
+    },
+    "test": {
+      "n_clusters_found": 2,
+      "silhouette_score": 0.5798974513009698,
+      "calinski_harabasz_score": 36.21106492094827,
+      "davies_bouldin_score": 0.49018285451071275
+    },
+    "n_iter": 9,
+    "inertia": 315.42467697889384
+  }
+}

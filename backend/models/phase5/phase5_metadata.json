@@ -1,0 +1,30 @@
+{
+  "phase": "Phase 5 - Regime Detection",
+  "primary_model": "GaussianMixture",
+  "fallback_model": "KMeans",
+  "n_clusters": 4,
+  "feature_columns": [
+    "vix_level",
+    "high_yield_spread",
+    "us_cpi_yoy",
+    "yield_spread",
+    "spx_vol_3m"
+  ],
+  "train_rows": 194,
+  "validation_rows": 42,
+  "test_rows": 42,
+  "train_date_range": [
+    "2003-02-01",
+    "2019-03-01"
+  ],
+  "validation_date_range": [
+    "2019-04-01",
+    "2022-09-01"
+  ],
+  "test_date_range": [
+    "2022-10-01",
+    "2026-03-01"
+  ],
+  "total_rows_used": 278,
+  "model_retrain_policy": "Retrain full model when new data is appended. No true online learning for GMM/KMeans."
+}

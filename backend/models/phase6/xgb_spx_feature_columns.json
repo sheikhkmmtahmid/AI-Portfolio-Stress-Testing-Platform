@@ -1,0 +1,41 @@
+{
+  "raw_feature_columns": [
+    "us2y_yield",
+    "us10y_yield",
+    "yield_spread",
+    "us_cpi_yoy",
+    "high_yield_spread",
+    "vix_level",
+    "spx_vol_3m",
+    "eurusd_return",
+    "gbpusd_return",
+    "spx_return",
+    "ndx_return",
+    "gold_return",
+    "ecb_level",
+    "ecb_yoy",
+    "regime_confidence",
+    "regime_label"
+  ],
+  "transformed_feature_columns": [
+    "us2y_yield",
+    "us10y_yield",
+    "yield_spread",
+    "us_cpi_yoy",
+    "high_yield_spread",
+    "vix_level",
+    "spx_vol_3m",
+    "eurusd_return",
+    "gbpusd_return",
+    "spx_return",
+    "ndx_return",
+    "gold_return",
+    "ecb_level",
+    "ecb_yoy",
+    "regime_confidence",
+    "regime_label_calm",
+    "regime_label_credit_stress",
+    "regime_label_crisis",
+    "regime_label_inflation_stress"
+  ]
+}

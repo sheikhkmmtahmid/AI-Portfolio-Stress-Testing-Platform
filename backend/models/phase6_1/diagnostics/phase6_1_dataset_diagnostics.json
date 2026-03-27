@@ -1,0 +1,52 @@
+{
+  "rows": 188,
+  "date_min": "2010-08-01",
+  "date_max": "2026-03-01",
+  "columns": [
+    "date",
+    "spx_return",
+    "ndx_return",
+    "gold_return",
+    "eurusd_return",
+    "gbpusd_return",
+    "spx_vol_3m",
+    "ndx_vol_3m",
+    "vix_level",
+    "us2y_yield",
+    "us10y_yield",
+    "yield_spread",
+    "us_cpi_yoy",
+    "high_yield_spread",
+    "vix_spike",
+    "spx_drawdown",
+    "ndx_drawdown",
+    "ecb_level",
+    "ecb_yoy",
+    "dxy_return",
+    "qqq_return",
+    "btc_return",
+    "regime_label",
+    "regime_confidence"
+  ],
+  "core_numeric_features_present": [
+    "us2y_yield",
+    "us10y_yield",
+    "yield_spread",
+    "us_cpi_yoy",
+    "high_yield_spread",
+    "vix_level",
+    "spx_vol_3m",
+    "eurusd_return",
+    "gbpusd_return",
+    "spx_return",
+    "ndx_return",
+    "gold_return",
+    "regime_confidence"
+  ],
+  "optional_numeric_features_present": [
+    "ecb_level",
+    "ecb_yoy"
+  ],
+  "optional_numeric_features_missing": [],
+  "gold_extra_features_present": []
+}

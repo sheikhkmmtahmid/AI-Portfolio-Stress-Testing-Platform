@@ -1,0 +1,107 @@
+{
+  "phase": "phase6_asset_sensitivity_models",
+  "status": "completed",
+  "architecture": "long_history_core_models",
+  "created_at_utc": "2026-03-26T18:40:46Z",
+  "project_root": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend",
+  "data_sources": {
+    "features_monthly_full_history": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\data\\features\\features_monthly_btc.csv",
+    "regime_dataset": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\data\\regimes\\regime_dataset.csv"
+  },
+  "split": {
+    "train_end_date": "2018-12-31",
+    "test_start_date": "2019-01-01",
+    "split_type": "time_based"
+  },
+  "features": {
+    "active_numeric": [
+      "us2y_yield",
+      "us10y_yield",
+      "yield_spread",
+      "us_cpi_yoy",
+      "high_yield_spread",
+      "vix_level",
+      "spx_vol_3m",
+      "eurusd_return",
+      "gbpusd_return",
+      "spx_return",
+      "ndx_return",
+      "gold_return",
+      "ecb_level",
+      "ecb_yoy",
+      "regime_confidence"
+    ],
+    "active_categorical": [
+      "regime_label"
+    ],
+    "optional_not_used": [
+      "uk_cpi_yoy",
+      "ftse_return",
+      "btc_return",
+      "fed_funds_level",
+      "fed_funds_change_1m",
+      "tips_10y_level",
+      "tips_10y_change_1m",
+      "real_yield_tips",
+      "real_yield_tips_change_1m",
+      "breakeven_10y_level",
+      "breakeven_10y_change_1m",
+      "dxy_return",
+      "dxy_return_3m",
+      "qqq_return"
+    ]
+  },
+  "targets_trained": {
+    "btc": "btc_return"
+  },
+  "targets_skipped": {
+    "ftse": "Target column 'ftse_return' not present in long-history dataset"
+  },
+  "artifacts": [
+    {
+      "asset": "btc",
+      "target_column": "btc_target",
+      "train_rows": 101,
+      "test_rows": 86,
+      "feature_columns": [
+        "us2y_yield",
+        "us10y_yield",
+        "yield_spread",
+        "us_cpi_yoy",
+        "high_yield_spread",
+        "vix_level",
+        "spx_vol_3m",
+        "eurusd_return",
+        "gbpusd_return",
+        "spx_return",
+        "ndx_return",
+        "gold_return",
+        "ecb_level",
+        "ecb_yoy",
+        "regime_confidence",
+        "regime_label"
+      ],
+      "train_snapshot": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\training_cache\\train_snapshot_btc.csv",
+      "test_snapshot": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\training_cache\\test_snapshot_btc.csv",
+      "elastic_net_model": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\elastic_net_btc.pkl",
+      "elastic_net_preprocessor": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\elastic_net_btc_preprocessor.pkl",
+      "elastic_net_predictions": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\predictions\\elastic_net_btc_predictions.csv",
+      "elastic_net_cv_results": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\evaluation\\elastic_net_btc_cv_results.json",
+      "xgboost_model": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\xgb_btc.pkl",
+      "xgboost_predictions": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\predictions\\xgboost_btc_predictions.csv",
+      "xgboost_training_trace": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\evaluation\\xgb_btc_training_trace.json",
+      "feature_importance_files": {
+        "elastic_net": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\feature_importance\\elastic_net_btc_importance.csv",
+        "xgboost": "D:\\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\\backend\\models\\phase6\\feature_importance\\xgb_btc_importance.csv"
+      }
+    }
+  ],
+  "retraining_note": {
+    "elastic_net": "Designed for full retraining on merged historical data. Preprocessing artifacts and snapshots are saved for reproducibility.",
+    "xgboost": "Model artifacts, training traces, and snapshots are saved. Future retraining can use merged data or careful warm-start continuation."
+  },
+  "future_extensions": {
+    "uk_ftse_variant": "Train on a shorter-history dataset that includes ftse_return and uk_cpi_yoy.",
+    "crypto_variant": "Train on a shorter-history dataset that includes btc_return."
+  }
+}

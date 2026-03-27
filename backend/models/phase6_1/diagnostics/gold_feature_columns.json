@@ -1,0 +1,32 @@
+{
+  "feature_columns": [
+    "us2y_yield",
+    "us10y_yield",
+    "yield_spread",
+    "us_cpi_yoy",
+    "high_yield_spread",
+    "vix_level",
+    "spx_vol_3m",
+    "eurusd_return",
+    "gbpusd_return",
+    "spx_return",
+    "ndx_return",
+    "gold_return",
+    "regime_confidence",
+    "ecb_level",
+    "ecb_yoy",
+    "spx_return_lag1",
+    "spx_return_lag2",
+    "ndx_return_lag1",
+    "ndx_return_lag2",
+    "gold_return_lag1",
+    "gold_return_lag2",
+    "vix_level_lag1",
+    "vix_level_lag2",
+    "yield_spread_lag1",
+    "yield_spread_lag2",
+    "high_yield_spread_lag1",
+    "high_yield_spread_lag2",
+    "regime_label"
+  ]
+}
