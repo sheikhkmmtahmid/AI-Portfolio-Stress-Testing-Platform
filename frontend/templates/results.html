@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+{% block page_title %}Results{% endblock %}
+
+{% block head %}
+<style>
+  .results-kpi { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+  .kpi-cell {
+    background:var(--bg-600); border:1px solid var(--bg-500); border-radius:8px;
+    padding:12px 14px;
+  }
+  .kpi-label { font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; }
+  .kpi-val   { font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:3px; }
+
+  .scenario-list-table td { vertical-align:middle; }
+  .ret-cell {
+    display:flex; align-items:center; gap:8px; white-space:nowrap;
+  }
+  .ret-val {
+    width:70px; text-align:right; font-family:'IBM Plex Mono',monospace;
+    font-size:13px; font-weight:600; flex-shrink:0;
+  }
+  .ret-track {
+    flex:1; height:6px; background:var(--bg-500); border-radius:3px;
+    overflow:hidden; min-width:40px;
+  }
+  .ret-fill { height:100%; border-radius:3px; }
+
+  .tabs { display:flex; gap:0; margin-bottom:20px; border-bottom:2px solid var(--bg-500); }
+  .tab-btn {
+    padding:8px 20px; font-size:13px; cursor:pointer; border:none;
+    background:transparent; color:var(--text-300); border-bottom:2px solid transparent;
+    margin-bottom:-2px; transition:color .15s, border-color .15s; font-family:inherit;
+  }
+  .tab-btn.active { color:var(--gold); border-bottom-color:var(--gold); font-weight:600; }
+  .tab-pane { display:none; }
+  .tab-pane.active { display:block; animation: fadeInPane .18s ease; }
+  @keyframes fadeInPane { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:none; } }
+  .tabs-body { min-height: 520px; }
+
+  .shap-row { display:flex; align-items:center; gap:10px; padding:5px 0; border-bottom:1px solid var(--bg-500); }
+  .shap-label { width:180px; font-size:12px; color:var(--text-300); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .shap-track { flex:1; height:6px; background:var(--bg-500); border-radius:3px; overflow:hidden; }
+  .shap-fill  { height:100%; border-radius:3px; }
+  .shap-val   { width:70px; text-align:right; font-size:12px; font-family:'IBM Plex Mono',monospace; color:var(--text-200); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Top KPIs ─────────────────────────────────────────────────────────────── -->
+{% if portfolio_data %}
+<div class="results-kpi">
+  {% set m = portfolio_data.metrics %}
+  <div class="kpi-cell">
+    <div class="kpi-label">Expected Return</div>
+    <div class="kpi-val {% if m.expected_return_annual > 0 %}text-positive{% else %}text-negative{% endif %}">
+      {{ "%+.2f"|format(m.expected_return_annual * 100) }}%
+    </div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-label">Volatility</div>
+    <div class="kpi-val">{{ "%.2f"|format(m.volatility_annual * 100) }}%</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-label">Sharpe</div>
+    <div class="kpi-val text-gold">{{ "%.2f"|format(m.sharpe_ratio) }}</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-label">VaR 95%</div>
+    <div class="kpi-val text-negative">{{ "%.2f"|format(m.var_95_monthly * 100) }}%</div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-label">CVaR 95%</div>
+    <div class="kpi-val text-negative">
+      {% if m.cvar_95_monthly is defined %}{{ "%.2f"|format(m.cvar_95_monthly * 100) }}%{% else %}—{% endif %}
+    </div>
+  </div>
+  <div class="kpi-cell">
+    <div class="kpi-label">Div. Ratio</div>
+    <div class="kpi-val text-gold">
+      {% if m.diversification_ratio is defined %}{{ "%.3f"|format(m.diversification_ratio) }}{% else %}—{% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Results guide ─────────────────────────────────────────────────────────── -->
+<div style="background:rgba(211,166,37,0.08); border:1px solid rgba(211,166,37,0.2);
+            border-radius:7px; padding:10px 14px; margin-bottom:18px; font-size:12px;
+            color:var(--text-300); line-height:1.6; display:flex; gap:20px; flex-wrap:wrap;">
+  <span><strong style="color:var(--gold);">Stress Tests</strong> — All 20 scenario returns sorted worst→best. Red = loss, green = gain.</span>
+  <span style="color:var(--text-400);">|</span>
+  <span><strong style="color:var(--gold);">Drawdown</strong> — Peak-to-trough loss over the full price history for each asset.</span>
+  <span style="color:var(--text-400);">|</span>
+  <span><strong style="color:var(--gold);">Explainability</strong> — SHAP values show which macro factors drive each asset's returns.</span>
+  <span style="color:var(--text-400);">|</span>
+  <span><strong style="color:var(--gold);">Narrative</strong> — Plain-English AI analysis of your portfolio's risk profile.</span>
+</div>
+
+<!-- ── Tabs ─────────────────────────────────────────────────────────────────── -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('stress')">Stress Tests</button>
+  <button class="tab-btn" onclick="switchTab('drawdown')">Drawdown</button>
+  <button class="tab-btn" onclick="switchTab('explainability')">Explainability</button>
+  <button class="tab-btn" onclick="switchTab('narrative')">Narrative</button>
+</div>
+
+<div class="tabs-body">
+<!-- ── Tab: Stress Tests ─────────────────────────────────────────────────────── -->
+<div class="tab-pane active" id="tab-stress">
+  <div class="grid-2-1">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Stressed Returns — All Scenarios</div>
+        <div class="card-badge">{{ stress_data | length if stress_data else 0 }} Scenarios</div>
+      </div>
+      <div class="chart-container" style="height:420px;">
+        <canvas id="stressWaterfall"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Scenario Table</div>
+      </div>
+      <div style="overflow-y:auto; max-height:420px;">
+        <table class="data-table scenario-list-table">
+          <thead><tr><th>Scenario</th><th>Return</th></tr></thead>
+          <tbody>
+            {% if stress_data %}
+            {% for sc_id, sc in stress_data.items() | sort(attribute='1.portfolio_return') %}
+            <tr>
+              <td style="font-size:12px;">{{ sc_id | replace('_',' ') | title }}</td>
+              <td style="width:180px;">
+                <div class="ret-cell">
+                  <span class="ret-val {% if sc.portfolio_return >= 0 %}text-positive{% else %}text-negative{% endif %}">
+                    {{ "%+.2f"|format(sc.portfolio_return * 100) }}%
+                  </span>
+                  <div class="ret-track">
+                    <div class="ret-fill" style="width:{{ [sc.portfolio_return | abs * 700, 100] | min }}%; background:{% if sc.portfolio_return >= 0 %}#2EC4A0{% else %}#E8455A{% endif %};"></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr><td colspan="2" style="color:var(--text-400);">No stress data.</td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Per-asset contribution for worst scenario -->
+  {% if worst_scenario %}
+  <div class="card" style="margin-top:20px;">
+    <div class="card-header">
+      <div class="card-title">Worst Scenario: {{ worst_scenario.name }}</div>
+      <div class="card-badge text-negative">{{ "%+.2f"|format(worst_scenario.portfolio_return * 100) }}%</div>
+    </div>
+    <div class="chart-container" style="height:160px;">
+      <canvas id="worstContribChart"></canvas>
+    </div>
+    <table class="data-table" style="margin-top:14px;">
+      <thead><tr><th>Asset</th><th>Weight</th><th>Scenario Return</th><th>Contribution</th></tr></thead>
+      <tbody>
+        {% for asset, contrib in worst_scenario.asset_contributions.items() %}
+        <tr>
+          <td>{{ asset | upper }}</td>
+          <td>{{ "%.1f"|format(worst_scenario.weights.get(asset, 0) * 100) }}%</td>
+          <td class="{% if worst_scenario.asset_returns.get(asset, 0) >= 0 %}text-positive{% else %}text-negative{% endif %}">
+            {{ "%+.2f"|format(worst_scenario.asset_returns.get(asset, 0) * 100) }}%
+          </td>
+          <td class="{% if contrib >= 0 %}text-positive{% else %}text-negative{% endif %}">
+            {{ "%+.3f"|format(contrib * 100) }}%
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+
+<!-- ── Tab: Drawdown ─────────────────────────────────────────────────────────── -->
+<div class="tab-pane" id="tab-drawdown">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Historical Drawdown by Asset</div>
+      <div class="card-badge">Full History</div>
+    </div>
+    <div class="chart-container" style="height:320px;">
+      <canvas id="fullDrawdownChart"></canvas>
+    </div>
+  </div>
+
+  {% if drawdown_stats %}
+  <div class="grid-4" style="margin-top:20px;">
+    {% for asset, stats in drawdown_stats.items() %}
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">{{ asset | upper }}</div>
+      </div>
+      <div style="margin-bottom:8px;">
+        <div style="font-size:11px; color:var(--text-400);">Max Drawdown</div>
+        <div style="font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; color:var(--scarlet);">
+          {{ "%.1f"|format(stats.max_drawdown * 100) }}%
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:var(--text-400);">Avg Drawdown</div>
+        <div style="font-size:16px; font-weight:600; font-family:'IBM Plex Mono',monospace; color:var(--text-200);">
+          {{ "%.1f"|format(stats.avg_drawdown * 100) }}%
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+<!-- ── Tab: Explainability ───────────────────────────────────────────────────── -->
+<div class="tab-pane" id="tab-explainability">
+  <div class="grid-2">
+
+    <!-- Portfolio factor exposures -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Portfolio Factor Exposures</div>
+        <div class="card-badge">Weighted SHAP</div>
+      </div>
+      <div class="chart-container" style="height:300px;">
+        <canvas id="portfolioFactorChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Per-asset SHAP top features -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Asset Top Drivers</div>
+        <div class="card-badge">Mean |SHAP|</div>
+      </div>
+
+      {% if shap_data %}
+      {% for asset in ['spx','ndx','gold','btc'] %}
+        {% if shap_data.get(asset) %}
+        <div style="margin-bottom:16px;">
+          <div style="font-size:11px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px;">
+            {{ asset | upper }} — {{ {'spx':'S&P 500','ndx':'Nasdaq 100','gold':'Gold','btc':'Bitcoin'}[asset] }}
+          </div>
+          {% set features = shap_data[asset].items() | list | sort(attribute='1', reverse=True) %}
+          {% for feat, val in features[:5] %}
+          <div class="shap-row">
+            <div class="shap-label" title="{{ feat }}">{{ feat }}</div>
+            <div class="shap-track">
+              <div class="shap-fill" style="width:{{ [val / (features[0][1] + 0.0001) * 100, 100] | min }}%;
+                background:{% if loop.index0 == 0 %}var(--gold){% elif loop.index0 == 1 %}var(--scarlet){% else %}var(--text-300){% endif %};"></div>
+            </div>
+            <div class="shap-val">{{ "%.5f"|format(val) }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endfor %}
+      {% else %}
+      <div style="color:var(--text-400); font-size:13px;">SHAP data not available. Run Phase 8.</div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Tab: Narrative ────────────────────────────────────────────────────────── -->
+<div class="tab-pane" id="tab-narrative">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">AI Risk Narrative</div>
+      <div class="card-badge" id="narrativeBadge">Live</div>
+    </div>
+    <!-- Weights selector for dynamic narrative -->
+    <div style="padding:14px 20px 0; border-bottom:1px solid var(--bg-500); margin-bottom:16px;">
+      <div style="font-size:11px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px;">
+        Generate narrative for custom weights
+      </div>
+      <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-end;">
+        {% set nw_assets = [('spx','S&P 500','#E8455A'),('ndx','Nasdaq 100','#4FA8DE'),('gold','Gold','#D3A625'),('btc','Bitcoin','#F97316')] %}
+        {% set nw_defaults = {'spx':35,'ndx':30,'gold':25,'btc':10} %}
+        {% for asset, label, color in nw_assets %}
+        <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:160px;">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{{ color }};flex-shrink:0;"></span>
+          <span style="font-size:12px; color:var(--text-300); width:80px; flex-shrink:0;">{{ label }}</span>
+          <input type="range" id="nw_slider_{{ asset }}" min="0" max="100" step="1"
+                 value="{{ (portfolio_data.weights.regime_adjusted.get(asset,0)*100)|round|int if portfolio_data else nw_defaults[asset] }}"
+                 style="flex:1; accent-color:{{ color }};"
+                 oninput="onNarrativeSlider('{{ asset }}')">
+          <span id="nw_pct_{{ asset }}" style="font-family:'IBM Plex Mono',monospace; font-size:12px; color:{{ color }}; width:36px; text-align:right;">
+            {{ (portfolio_data.weights.regime_adjusted.get(asset,0)*100)|round|int if portfolio_data else nw_defaults[asset] }}%
+          </span>
+        </div>
+        {% endfor %}
+        <button class="btn btn-gold" id="narrativeBtn" onclick="refreshNarrative()" style="flex-shrink:0; height:34px;">
+          Regenerate
+        </button>
+      </div>
+      <div style="font-size:11px; color:var(--text-400); margin-top:8px; margin-bottom:10px;">
+        Sum: <span id="nw_sum" style="font-family:'IBM Plex Mono',monospace; color:var(--gold);">
+          {{ portfolio_data.weights.regime_adjusted.values()|map('float')|sum|round(2) * 100 if portfolio_data else 100 }}%
+        </span>
+      </div>
+    </div>
+    <!-- Narrative output -->
+    <div id="narrativeOutput" style="padding:0 20px 16px;">
+      <div id="narrativeSpinner" style="display:none; text-align:center; padding:24px; color:var(--text-400);">
+        <div style="font-size:12px;">Generating narrative…</div>
+      </div>
+      <div id="narrativeCards"></div>
+    </div>
+  </div>
+</div>
+
+</div>{# /tabs-body #}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function switchTab(name) {
+  document.querySelectorAll(".tab-btn").forEach((b,i) => {
+    const panes = ["stress","drawdown","explainability","narrative"];
+    b.classList.toggle("active", panes[i] === name);
+  });
+  document.querySelectorAll(".tab-pane").forEach(p => {
+    p.classList.toggle("active", p.id === "tab-" + name);
+  });
+  if (name === "drawdown")       renderDrawdown();
+  if (name === "explainability") renderExplainability();
+  if (name === "narrative")      initNarrativeTab();
+}
+
+/* ── Dynamic Narrative ───────────────────────────────────────────────────── */
+const NW_ASSETS = ["spx","ndx","gold","btc"];
+let _narrativeLoaded = false;
+
+function onNarrativeSlider(asset) {
+  const val = parseInt(document.getElementById(`nw_slider_${asset}`).value);
+  document.getElementById(`nw_pct_${asset}`).textContent = val + "%";
+  const sum = NW_ASSETS.reduce((s,a) => s + parseInt(document.getElementById(`nw_slider_${a}`).value), 0);
+  const el = document.getElementById("nw_sum");
+  el.textContent = sum + "%";
+  el.style.color = sum === 100 ? "var(--gold)" : "var(--scarlet)";
+}
+
+function initNarrativeTab() {
+  if (_narrativeLoaded) return;
+  _narrativeLoaded = true;
+  refreshNarrative();
+}
+
+async function refreshNarrative() {
+  const sum = NW_ASSETS.reduce((s,a) => s + parseInt(document.getElementById(`nw_slider_${a}`).value), 0);
+  if (Math.abs(sum - 100) > 1) {
+    showToast("Weights must sum to 100% before generating narrative.", "error");
+    return;
+  }
+
+  const weights = {};
+  NW_ASSETS.forEach(a => weights[a] = parseInt(document.getElementById(`nw_slider_${a}`).value) / 100);
+
+  const spinner = document.getElementById("narrativeSpinner");
+  const cards   = document.getElementById("narrativeCards");
+  const btn     = document.getElementById("narrativeBtn");
+  spinner.style.display = "block";
+  cards.innerHTML = "";
+  showLoading(btn, "Generating…");
+
+  try {
+    const data = await apiPost("/api/narrative/dynamic", { weights });
+    renderNarrativeCards(data);
+    document.getElementById("narrativeBadge").textContent = new Date().toLocaleTimeString();
+  } catch(e) {
+    cards.innerHTML = `<div style="color:var(--scarlet); font-size:13px; padding:8px;">
+      Failed to generate narrative: ${e.message}</div>`;
+  } finally {
+    spinner.style.display = "none";
+    hideLoading(btn);
+  }
+}
+
+function renderNarrativeCards(data) {
+  const cards = document.getElementById("narrativeCards");
+  if (!data.narratives || !data.narratives.length) {
+    cards.innerHTML = '<div style="color:var(--text-400); font-size:13px;">No narrative available.</div>';
+    return;
+  }
+
+  const regimeInfo = data.regime ? `
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; padding:12px 16px;
+                background:var(--bg-600); border-radius:8px; border-left:3px solid var(--gold);">
+      <div>
+        <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;">Current Regime</div>
+        <div style="font-size:14px; font-weight:700; color:var(--gold); text-transform:capitalize; margin-top:2px;">
+          ${data.regime.replace(/_/g," ")}
+        </div>
+      </div>
+      <div style="border-left:1px solid var(--bg-500); padding-left:16px;">
+        <div style="font-size:10px; color:var(--text-400);">Confidence</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-100);">
+          ${(data.regime_confidence * 100).toFixed(0)}%
+        </div>
+      </div>
+    </div>` : "";
+
+  const items = data.narratives.map(n => `
+    <div style="margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid var(--bg-500);">
+      <div style="font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+                  color:var(--gold); margin-bottom:8px;">${n.title}</div>
+      <div style="font-size:13px; color:var(--text-200); line-height:1.8;">${n.text}</div>
+    </div>`).join("");
+
+  cards.innerHTML = regimeInfo + `<div style="columns:2; column-gap:20px;">${items}</div>`;
+}
+
+/* ── Stress waterfall + worst contrib — deferred so layout is stable before render ── */
+requestAnimationFrame(() => requestAnimationFrame(() => {
+  {% if stress_data %}
+  (function () {
+    const raw = {{ stress_data | tojson }};
+    const sorted = Object.entries(raw).sort(([,a],[,b]) => a.portfolio_return - b.portfolio_return);
+    const labels = sorted.map(([k]) => k.replace(/_/g," ").replace(/\b\w/g,l=>l.toUpperCase()));
+    const values = sorted.map(([,v]) => v.portfolio_return);
+    buildWaterfallChart("stressWaterfall", labels, values);
+  })();
+  {% endif %}
+  {% if worst_scenario %}
+  (function () {
+    const wc = {{ worst_scenario.asset_contributions | tojson }};
+    const assets = Object.keys(wc);
+    buildContributionChart("worstContribChart", assets, assets.map(a => wc[a]));
+  })();
+  {% endif %}
+}));
+
+/* ── Drawdown (lazy) ── */
+let drawdownRendered = false;
+function renderDrawdown() {
+  if (drawdownRendered) return;
+  drawdownRendered = true;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    {% if drawdown_data %}
+    const dd = {{ drawdown_data | tojson }};
+    const series = {};
+    ["spx","ndx","gold","btc"].forEach(a => { if (dd[a]) series[a] = dd[a]; });
+    buildDrawdownChart("fullDrawdownChart", dd.dates || [], series);
+    {% endif %}
+  }));
+}
+
+/* ── Portfolio factor chart (lazy) ── */
+let factorRendered = false;
+function renderExplainability() {
+  if (factorRendered) return;
+  factorRendered = true;
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    {% if factor_exposures %}
+    const fe = {{ factor_exposures | tojson }};
+    buildFactorChart("portfolioFactorChart", Object.keys(fe), Object.values(fe));
+    {% endif %}
+  }));
+}
+</script>
+{% endblock %}

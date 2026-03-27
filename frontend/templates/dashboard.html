@@ -1,0 +1,712 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- ── Platform Hero Title ───────────────────────────────────────────────── -->
+<div style="text-align:center; padding:28px 0 20px; margin-bottom:8px;">
+  <div style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase;
+              color:var(--gold); font-family:'Playfair Display',serif;
+              font-weight:600; margin-bottom:10px; opacity:0.8;">
+    Sigma Risk Analytics
+  </div>
+  <h1 style="font-family:'Playfair Display',serif; font-size:clamp(22px,3vw,34px);
+             font-weight:700; color:var(--text-100); line-height:1.25;
+             letter-spacing:-0.01em; margin:0 0 10px;">
+    AI Portfolio Stress Testing Platform
+  </h1>
+  <div style="width:60px; height:2px;
+              background:linear-gradient(90deg,var(--scarlet),var(--gold));
+              margin:0 auto 12px; border-radius:2px;"></div>
+  <p style="font-size:13px; color:var(--text-300); max-width:540px;
+            margin:0 auto; line-height:1.6;">
+    Machine-learning driven scenario analysis, factor decomposition and market regime detection
+    for multi-asset portfolio risk management.
+  </p>
+</div>
+
+<!-- ── How to use ────────────────────────────────────────────────────────── -->
+<div style="background:linear-gradient(135deg,rgba(174,0,1,0.12),rgba(211,166,37,0.10));
+            border:1px solid rgba(211,166,37,0.25); border-radius:10px;
+            padding:18px 22px; margin-bottom:24px;">
+  <div style="font-family:'Playfair Display',serif; font-size:15px; font-weight:700;
+              color:var(--gold); margin-bottom:10px; display:flex; align-items:center; gap:8px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    How to Stress Test Your Portfolio — 3 Steps
+  </div>
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px;">
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--scarlet);color:#fff;
+                  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">1</div>
+      <div>
+        <div style="font-weight:600;color:var(--text-100);font-size:13px;margin-bottom:3px;">
+          <a href="/portfolio" style="color:var(--gold);text-decoration:none;">Build Your Portfolio →</a>
+        </div>
+        <div style="font-size:12px;color:var(--text-300);line-height:1.5;">
+          Use the weight sliders to set your asset allocation across S&amp;P 500, Nasdaq, Gold, and Bitcoin. Click <strong style="color:var(--text-200);">Analyse Portfolio</strong> to see live Sharpe, VaR, and risk contributions.
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--scarlet);color:#fff;
+                  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">2</div>
+      <div>
+        <div style="font-weight:600;color:var(--text-100);font-size:13px;margin-bottom:3px;">
+          <a href="/scenarios" style="color:var(--gold);text-decoration:none;">Run Stress Scenarios →</a>
+        </div>
+        <div style="font-size:12px;color:var(--text-300);line-height:1.5;">
+          Select from 20 historical crises (GFC 2008, COVID crash, 2022 inflation spike, etc.) and apply them to your weights. See exactly which assets drive losses and by how much.
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px; align-items:flex-start;">
+      <div style="width:28px;height:28px;border-radius:50%;background:var(--scarlet);color:#fff;
+                  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0;">3</div>
+      <div>
+        <div style="font-weight:600;color:var(--text-100);font-size:13px;margin-bottom:3px;">
+          <a href="/results" style="color:var(--gold);text-decoration:none;">Analyse Results →</a>
+        </div>
+        <div style="font-size:12px;color:var(--text-300);line-height:1.5;">
+          Review all 20 scenario outcomes, historical drawdowns, SHAP-based factor exposures, and plain-English AI narratives that explain what macro forces drive your portfolio's risk.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── KPI strip ──────────────────────────────────────────────────────────── -->
+<div class="grid-4" style="margin-bottom:28px;">
+
+  <div class="metric-card">
+    <div class="metric-label">Portfolio Value</div>
+    <div class="metric-value text-gold">$1,000,000</div>
+    <div class="metric-sub">Notional reference</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-label">Expected Return (Ann.)</div>
+    <div class="metric-value {% if portfolio_data and portfolio_data.metrics.expected_return_annual > 0 %}text-positive{% else %}text-negative{% endif %}">
+      {% if portfolio_data %}
+        {{ "%+.2f"|format(portfolio_data.metrics.expected_return_annual * 100) }}%
+      {% else %}—{% endif %}
+    </div>
+    <div class="metric-sub">Ensemble model forecast</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-label">Sharpe Ratio</div>
+    <div class="metric-value text-gold">
+      {% if portfolio_data %}{{ "%.2f"|format(portfolio_data.metrics.sharpe_ratio) }}{% else %}—{% endif %}
+    </div>
+    <div class="metric-sub">Risk-adjusted return</div>
+  </div>
+
+  <div class="metric-card">
+    <div class="metric-label">VaR 95% (Monthly)</div>
+    <div class="metric-value text-negative">
+      {% if portfolio_data %}{{ "%.2f"|format(portfolio_data.metrics.var_95_monthly * 100) }}%{% else %}—{% endif %}
+    </div>
+    <div class="metric-sub">Historical simulation</div>
+  </div>
+
+</div>
+
+<!-- ── My Portfolio comparison (only if user has saved one) ──────────────── -->
+{% if user_portfolio %}
+<div id="my-portfolio" class="card" style="margin-bottom:28px; border-color:rgba(211,166,37,0.35);">
+  <div class="card-header" style="border-bottom:1px solid rgba(211,166,37,0.2);">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="card-title">My Portfolio</div>
+      <div class="card-badge" style="background:rgba(211,166,37,0.15); color:var(--gold);">Custom</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-size:11px; color:var(--text-400);">
+        Saved {{ user_portfolio.saved_at[:10] if user_portfolio.saved_at else '' }}
+      </span>
+      <button onclick="clearUserPortfolio()" class="btn btn-ghost"
+              style="padding:3px 10px; font-size:11px; color:var(--scarlet); border-color:rgba(174,0,1,0.3);">
+        Clear
+      </button>
+      <a href="/portfolio" class="btn btn-ghost" style="padding:3px 10px; font-size:11px;">Edit →</a>
+    </div>
+  </div>
+
+  <div style="display:grid; grid-template-columns:auto 1fr; gap:24px; padding:4px 0;">
+
+    <!-- Allocation donut + weight labels -->
+    <div style="display:flex; gap:16px; align-items:center; min-width:280px;">
+      <div style="width:160px; height:160px; flex-shrink:0;">
+        <canvas id="userAllocChart"></canvas>
+      </div>
+      <div>
+        {% for asset, w in user_portfolio.weights.items() %}
+        {% if w > 0 %}
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:7px;">
+          <span style="display:inline-block; width:9px; height:9px; border-radius:50%;
+                       background:{{ {'spx':'#AE0001','ndx':'#D3A625','gold':'#C0A060','btc':'#4FA8DE'}.get(asset,'#888') }};
+                       flex-shrink:0;"></span>
+          <span style="font-size:12px; color:var(--text-300); text-transform:uppercase; width:40px;">{{ asset }}</span>
+          <span style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:var(--gold);">
+            {{ "%.0f"|format(w * 100) }}%
+          </span>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(130px,1fr)); gap:10px; align-content:start;">
+      {% set m = user_portfolio.metrics %}
+
+      <div style="background:var(--bg-600); border-radius:8px; padding:12px 14px;">
+        <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;">Exp. Return (Ann.)</div>
+        <div style="font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:4px;
+                    color:{% if m.expected_return_annual and m.expected_return_annual > 0 %}var(--positive){% else %}var(--scarlet){% endif %};">
+          {% if m.expected_return_annual is not none %}{{ "%+.1f"|format(m.expected_return_annual * 100) }}%{% else %}—{% endif %}
+        </div>
+      </div>
+
+      <div style="background:var(--bg-600); border-radius:8px; padding:12px 14px;">
+        <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;">Sharpe Ratio</div>
+        <div style="font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:4px; color:var(--gold);">
+          {% if m.sharpe_ratio_annual is not none %}{{ "%.2f"|format(m.sharpe_ratio_annual) }}{% else %}—{% endif %}
+        </div>
+      </div>
+
+      <div style="background:var(--bg-600); border-radius:8px; padding:12px 14px;">
+        <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;">Volatility (Ann.)</div>
+        <div style="font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:4px; color:var(--text-100);">
+          {% if m.volatility_annual is not none %}{{ "%.1f"|format(m.volatility_annual * 100) }}%{% else %}—{% endif %}
+        </div>
+      </div>
+
+      <div style="background:var(--bg-600); border-radius:8px; padding:12px 14px;">
+        <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;">VaR 95% (Monthly)</div>
+        <div style="font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:4px; color:var(--scarlet);">
+          {% if m.var_95_monthly is not none %}{{ "%.1f"|format(m.var_95_monthly * 100) }}%{% else %}—{% endif %}
+        </div>
+      </div>
+
+      <div style="background:var(--bg-600); border-radius:8px; padding:12px 14px;">
+        <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;">CVaR 95%</div>
+        <div style="font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:4px; color:var(--scarlet);">
+          {% if m.cvar_95_monthly is not none %}{{ "%.1f"|format(m.cvar_95_monthly * 100) }}%{% else %}—{% endif %}
+        </div>
+      </div>
+
+      <div style="background:var(--bg-600); border-radius:8px; padding:12px 14px;">
+        <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em;">Div. Ratio</div>
+        <div style="font-size:20px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:4px; color:var(--text-100);">
+          {% if m.diversification_ratio is not none %}{{ "%.2f"|format(m.diversification_ratio) }}{% else %}—{% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- ── Row 1: allocation + regime ─────────────────────────────────────────── -->
+<div class="grid-2" style="margin-bottom:28px;">
+
+  <!-- Allocation donut -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Portfolio Allocation</div>
+      <div class="card-badge">Regime-Adjusted</div>
+    </div>
+    <div class="chart-container" style="height:290px;">
+      <canvas id="allocChart"></canvas>
+    </div>
+    {% if portfolio_data %}
+    <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:14px;">
+      {% for asset, w in portfolio_data.weights.regime_adjusted.items() %}
+      <div class="weight-pill" style="background:var(--bg-600); border-radius:6px; padding:6px 12px; font-size:12px;">
+        <span style="color:var(--text-300);">{{ asset | upper }}</span>
+        <span style="color:var(--gold); font-family:'IBM Plex Mono',monospace; margin-left:8px; font-weight:600;">
+          {{ "%.1f"|format(w * 100) }}%
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Regime panel -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Market Regime</div>
+      <div class="card-badge">HMM Classification</div>
+    </div>
+
+    {% if regime_data %}
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+      <div class="regime-badge {{ regime_data.regime }}" style="font-size:15px; padding:8px 16px;">
+        <span class="regime-dot"></span>
+        {{ regime_data.regime | replace('_',' ') | title }}
+      </div>
+      <div>
+        <div style="font-size:12px; color:var(--text-300);">Confidence</div>
+        <div style="font-size:22px; font-weight:700; color:var(--gold); font-family:'IBM Plex Mono',monospace;">
+          {{ "%.0f"|format(regime_data.confidence * 100) }}%
+        </div>
+      </div>
+    </div>
+
+    {% if regime_data.history %}
+    <div class="regime-timeline-label" style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.08em; margin:0 20px 6px;">
+      Recent Regime History
+    </div>
+    <div class="regime-timeline" style="margin:0 20px;">
+      {% for entry in regime_data.history[-24:] %}
+      <div class="regime-tick {{ entry.regime }}" title="{{ entry.date[:7] }}: {{ entry.regime | replace('_',' ') | title }}"></div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <table class="data-table" style="margin-top:16px;">
+      <thead><tr><th>Regime</th><th>Count</th><th>% Time</th></tr></thead>
+      <tbody>
+        {% if regime_data.regime_counts %}
+        {% set total = regime_data.regime_counts.values() | sum %}
+        {% for r, cnt in regime_data.regime_counts.items() | sort(attribute='1', reverse=True) %}
+        <tr>
+          <td>
+            <span class="regime-badge {{ r }}" style="font-size:11px; padding:2px 8px;">
+              {{ r | replace('_',' ') | title }}
+            </span>
+          </td>
+          <td>{{ cnt }}</td>
+          <td>{{ "%.1f"|format(cnt / total * 100) }}%</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+      </tbody>
+    </table>
+    {% else %}
+    <div style="color:var(--text-400); font-size:13px;">Regime data not available. Run the pipeline first.</div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- ── Row 2: stress summary + factor exposures ────────────────────────────── -->
+<div class="grid-2-1" style="margin-bottom:28px;">
+
+  <!-- Stressed return waterfall (top 10 worst + 3 best) -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Stress Scenario Returns</div>
+      <div class="card-badge">20 Scenarios</div>
+    </div>
+    <div class="chart-container" style="height:320px;">
+      <canvas id="waterfallChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Factor exposure mini-card -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Top Factor Exposures</div>
+      <div class="card-badge">Portfolio SHAP</div>
+    </div>
+    <div id="factorBars">
+      {% if factor_exposures %}
+        {% set sorted_factors = factor_exposures.items() | list | sort(attribute='1', reverse=True) %}
+        {% for factor, val in sorted_factors[:8] %}
+        <div class="factor-row">
+          <div class="factor-label">{{ factor }}</div>
+          <div class="factor-bar-track">
+            <div class="factor-bar-fill" style="width: {{ [val * 300, 100] | min }}%;"></div>
+          </div>
+          <div class="factor-value">{{ "%.4f"|format(val) }}</div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div style="color:var(--text-400); font-size:13px; padding:12px 0;">
+        Factor data unavailable. Run pipeline phases first.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Row 3: historical drawdown ──────────────────────────────────────────── -->
+<div class="card" style="margin-bottom:28px;">
+  <div class="card-header">
+    <div class="card-title">Historical Drawdown</div>
+    <div class="card-badge">Full History</div>
+  </div>
+  <div class="chart-container" style="height:200px;">
+    <canvas id="drawdownChart"></canvas>
+  </div>
+</div>
+
+<!-- ── Row 4: asset metrics table ──────────────────────────────────────────── -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Asset Summary</div>
+    <div class="card-badge">Ensemble Forecasts</div>
+  </div>
+  <table class="data-table" style="table-layout:fixed; width:100%;">
+    <colgroup>
+      <col style="width:18%">
+      <col style="width:16%">
+      <col style="width:16%">
+      <col style="width:14%">
+      <col style="width:14%">
+      <col style="width:22%">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Asset</th>
+        <th style="text-align:right;">Exp. Return (Ann.)</th>
+        <th style="text-align:right;">Volatility (Ann.)</th>
+        <th style="text-align:right;">Base Weight</th>
+        <th style="text-align:right;">Regime Weight</th>
+        <th>Models</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% if portfolio_data %}
+      {% for asset in ['spx','ndx','gold','btc'] %}
+      {% set er = portfolio_data.metrics.asset_expected_returns_annual.get(asset) %}
+      {% set vol = portfolio_data.metrics.asset_volatilities_annual.get(asset) %}
+      {% set bw = portfolio_data.weights.base.get(asset, 0) %}
+      {% set rw = portfolio_data.weights.regime_adjusted.get(asset, 0) %}
+      <tr>
+        <td>
+          <span style="font-weight:600; color:var(--text-100);">{{ asset | upper }}</span>
+          <span style="color:var(--text-400); font-size:11px; margin-left:6px;">
+            {{ {'spx':'S&P 500','ndx':'Nasdaq 100','gold':'Gold','btc':'Bitcoin'}[asset] }}
+          </span>
+        </td>
+        <td style="text-align:right; font-family:'IBM Plex Mono',monospace;"
+            class="{% if er and er > 0 %}text-positive{% elif er %}text-negative{% endif %}">
+          {% if er is not none %}{{ "%+.2f"|format(er * 100) }}%{% else %}—{% endif %}
+        </td>
+        <td style="text-align:right; font-family:'IBM Plex Mono',monospace;">
+          {% if vol is not none %}{{ "%.2f"|format(vol * 100) }}%{% else %}—{% endif %}
+        </td>
+        <td style="text-align:right; font-family:'IBM Plex Mono',monospace;">
+          {{ "%.1f"|format(bw * 100) }}%
+        </td>
+        <td style="text-align:right; font-family:'IBM Plex Mono',monospace;"
+            class="{% if rw > bw %}text-positive{% elif rw < bw %}text-negative{% endif %}">
+          {{ "%.1f"|format(rw * 100) }}%
+        </td>
+        <td>
+          <span class="tag">ElasticNet</span>
+          <span class="tag">XGBoost</span>
+        </td>
+      </tr>
+      {% endfor %}
+      {% else %}
+      <tr><td colspan="6" style="text-align:center; color:var(--text-400); padding:20px;">
+        No portfolio data. Run pipeline phases 1–7 first.
+      </td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- ── Live Data Feeds ──────────────────────────────────────────────────────── -->
+<div class="card" style="margin-top:28px;">
+  <div class="card-header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div class="card-title">Live Data Feeds</div>
+      <div class="card-badge">Auto-Updated</div>
+    </div>
+    {% if live_data and live_data.fetched_at %}
+    <span id="prices-fetched-at" style="font-size:11px; color:var(--text-400);">
+      Prices as of {{ live_data.fetched_at[:16] | replace("T"," ") }} UTC
+    </span>
+    {% endif %}
+  </div>
+
+  {% if live_data and live_data.prices %}
+  {% set price_labels = {
+      'spx':'S&P 500','ndx':'Nasdaq 100','gold':'Gold','btc':'Bitcoin','vix':'VIX',
+      'eurusd':'EUR/USD','gbpusd':'GBP/USD','dxy':'DXY',
+      'usdjpy':'USD/JPY','usdchf':'USD/CHF','audusd':'AUD/USD','usdcad':'USD/CAD',
+      'nzdusd':'NZD/USD','usdcny':'USD/CNY','usdsek':'USD/SEK','usdnok':'USD/NOK',
+      'usdbdt':'USD/BDT','gbpbdt':'GBP/BDT','eurbdt':'EUR/BDT','goldbdt':'Gold/BDT'
+  } %}
+  {% set asset_group  = ['spx','ndx','gold','btc','vix'] %}
+  {% set major_fx     = ['eurusd','gbpusd','dxy'] %}
+  {% set usd_crosses  = ['usdjpy','usdchf','audusd','usdcad','nzdusd','usdcny','usdsek','usdnok'] %}
+  {% set bdt_rates    = ['usdbdt','gbpbdt','eurbdt','goldbdt'] %}
+  {% set fmt4dp       = ['eurusd','gbpusd','audusd','nzdusd','usdchf','usdcad'] %}
+
+  {# Reusable tile macro #}
+  {% macro fx_tile(asset, info) %}
+  <div data-feed-asset="{{ asset }}" style="background:var(--bg-600); border-radius:8px; padding:10px 14px; min-width:110px;">
+    <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px;">
+      {{ price_labels.get(asset, asset | upper) }}
+      <span style="font-size:9px; color:var(--text-500); margin-left:3px;">{{ info.ticker }}</span>
+    </div>
+    <div data-feed-price style="font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:700; color:var(--text-100);">
+      {% if asset in fmt4dp %}{{ "%.4f"|format(info.price) }}
+      {% elif asset == 'goldbdt' %}{{ "{:,.0f}".format(info.price) }}
+      {% else %}{{ "%.2f"|format(info.price) }}{% endif %}
+    </div>
+    <div data-feed-pct style="font-size:11px; font-family:'IBM Plex Mono',monospace; margin-top:2px;
+                color:{% if info.day_return >= 0 %}var(--positive){% else %}var(--scarlet){% endif %};">
+      {{ "%+.2f"|format(info.day_pct) }}%
+    </div>
+  </div>
+  {% endmacro %}
+
+  {# Helper macro for section dividers #}
+  {% macro fx_divider(label) %}
+  <div style="display:flex; align-items:center; gap:8px; padding:2px 0 6px; margin-top:4px;">
+    <div style="height:1px; width:24px; background:var(--bg-400);"></div>
+    <span style="font-size:10px; color:var(--text-500); text-transform:uppercase; letter-spacing:.08em;">{{ label }}</span>
+    <div style="height:1px; flex:1; background:var(--bg-400);"></div>
+  </div>
+  {% endmacro %}
+
+  <!-- Asset prices row -->
+  <div style="display:flex; gap:12px; flex-wrap:wrap; padding:4px 0 6px;">
+    {% for asset in asset_group %}{% if asset in live_data.prices %}{% set info = live_data.prices[asset] %}
+    <div data-feed-asset="{{ asset }}" style="background:var(--bg-600); border-radius:8px; padding:10px 16px; min-width:130px;">
+      <div style="font-size:10px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px;">
+        {{ price_labels.get(asset, asset | upper) }}
+        <span style="font-size:9px; color:var(--text-500); margin-left:4px;">{{ info.ticker }}</span>
+      </div>
+      <div data-feed-price style="font-family:'IBM Plex Mono',monospace; font-size:16px; font-weight:700; color:var(--text-100);">
+        {% if asset == 'vix' %}{{ "%.2f"|format(info.price) }}
+        {% elif asset == 'btc' %}${{ "{:,.0f}".format(info.price) }}
+        {% else %}{{ "{:,.2f}".format(info.price) }}{% endif %}
+      </div>
+      <div data-feed-pct style="font-size:11px; font-family:'IBM Plex Mono',monospace; margin-top:2px;
+                  color:{% if info.day_return >= 0 %}var(--positive){% else %}var(--scarlet){% endif %};">
+        {{ "%+.2f"|format(info.day_pct) }}%
+      </div>
+    </div>
+    {% endif %}{% endfor %}
+  </div>
+
+  <!-- Major FX row -->
+  {% if live_data.prices | selectattr and major_fx | select('in', live_data.prices) | list %}
+  {{ fx_divider('Major FX') }}
+  <div style="display:flex; gap:10px; flex-wrap:wrap; padding:0 0 4px;">
+    {% for asset in major_fx %}{% if asset in live_data.prices %}{{ fx_tile(asset, live_data.prices[asset]) }}{% endif %}{% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- USD Crosses row -->
+  {{ fx_divider('USD Crosses') }}
+  <div style="display:flex; gap:10px; flex-wrap:wrap; padding:0 0 4px;">
+    {% for asset in usd_crosses %}{% if asset in live_data.prices %}{{ fx_tile(asset, live_data.prices[asset]) }}{% endif %}{% endfor %}
+  </div>
+
+  <!-- BDT Rates row -->
+  {{ fx_divider('BDT Rates') }}
+  <div style="display:flex; gap:10px; flex-wrap:wrap; padding:0 0 8px;">
+    {% for asset in bdt_rates %}{% if asset in live_data.prices %}{{ fx_tile(asset, live_data.prices[asset]) }}{% endif %}{% endfor %}
+  </div>
+
+  {% endif %}
+
+  <!-- Feed status rows -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:8px 0 4px;">
+    {% if live_data and live_data.feeds %}
+    {% for feed in live_data.feeds %}
+    {% set freq = feed.label | lower %}
+    {% set status_color = 'var(--positive)' if feed.status == 'ok' else ('var(--gold)' if feed.status == 'no_api_key' else ('var(--text-400)' if feed.status == 'never' else 'var(--scarlet)')) %}
+    {% set status_label = '● Live' if feed.status == 'ok' else ('⚠ No API Key' if feed.status == 'no_api_key' else ('○ Never Run' if feed.status == 'never' else '✗ Error')) %}
+    <div style="background:var(--bg-600); border-radius:8px; padding:14px 16px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:14px;">{{ feed.icon }}</span>
+          <span style="font-size:12px; font-weight:700; color:var(--text-100); text-transform:uppercase; letter-spacing:.05em;">{{ feed.label }}</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:11px; font-weight:600; color:{{ status_color }};" id="feed-status-{{ freq }}">{{ status_label }}</span>
+          <button onclick="refreshFeed('{{ freq }}')" id="refresh-btn-{{ freq }}"
+                  title="Pull latest {{ feed.label }} data now"
+                  style="background:none; border:1px solid var(--bg-400); border-radius:6px; padding:3px 6px;
+                         color:var(--text-300); cursor:pointer; font-size:13px; line-height:1;
+                         transition:color .15s, border-color .15s;"
+                  onmouseover="this.style.color='var(--text-100)';this.style.borderColor='var(--text-300)';"
+                  onmouseout="this.style.color='var(--text-300)';this.style.borderColor='var(--bg-400)';">
+            ↻
+          </button>
+        </div>
+      </div>
+      <div style="font-size:11px; color:var(--gold); margin-bottom:4px;">
+        <a href="{{ feed.url }}" target="_blank" style="color:var(--gold); text-decoration:none;">{{ feed.source }}</a>
+      </div>
+      <div style="font-size:11px; color:var(--text-300); margin-bottom:6px; line-height:1.5;">{{ feed.assets }}</div>
+      {% if feed.last_updated and feed.last_updated != 'Never' %}
+      <div style="font-size:10px; color:var(--text-400);" id="feed-ts-{{ freq }}">
+        Last: {{ feed.last_updated[:16] | replace("T"," ") }} UTC
+      </div>
+      {% else %}
+      <div style="font-size:10px; color:var(--text-400);" id="feed-ts-{{ freq }}">Not yet fetched — run <code>python run_scheduler.py</code></div>
+      {% endif %}
+      {% if feed.status == 'no_api_key' %}
+      <div style="margin-top:6px; font-size:10px; color:var(--gold); background:rgba(211,166,37,0.08);
+                  border:1px solid rgba(211,166,37,0.2); border-radius:4px; padding:4px 8px;">
+        Set <code>FRED_API_KEY</code> env var — free at
+        <a href="https://fred.stlouisfed.org/docs/api/api_key.html" target="_blank"
+           style="color:var(--gold);">fred.stlouisfed.org</a>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div style="grid-column:1/-1; color:var(--text-400); font-size:13px; padding:12px 0;">
+      No live data yet. Run <code>python run_scheduler.py</code> to start automatic updates.
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+/* ── Live-feed manual refresh ─────────────────────────────────────────────── */
+const _feedSpinStyle = `
+  @keyframes ldf-spin { to { transform: rotate(360deg); } }
+  .ldf-spinning { display:inline-block; animation: ldf-spin .7s linear infinite; }
+`;
+(function(){ const s=document.createElement('style'); s.textContent=_feedSpinStyle; document.head.appendChild(s); })();
+
+async function refreshFeed(freq) {
+  const btn      = document.getElementById('refresh-btn-' + freq);
+  const tsEl     = document.getElementById('feed-ts-' + freq);
+  const statusEl = document.getElementById('feed-status-' + freq);
+  if (!btn || btn.disabled) return;
+
+  btn.disabled = true;
+  btn.classList.add('ldf-spinning');
+  btn.style.color = 'var(--gold)';
+  btn.style.borderColor = 'var(--gold)';
+
+  try {
+    const res  = await fetch('/api/live-data/refresh/' + freq, { method: 'POST' });
+    const data = await res.json();
+
+    if (!res.ok) {
+      const msg = data.detail || 'Refresh failed';
+      if (tsEl) { tsEl.style.color = 'var(--scarlet)'; tsEl.textContent = '✗ ' + msg; }
+      return;
+    }
+
+    /* Update timestamp */
+    if (tsEl && data.last_updated) {
+      const ts = data.last_updated.slice(0,16).replace('T',' ');
+      tsEl.textContent = 'Last: ' + ts + ' UTC';
+      tsEl.style.color = 'var(--text-400)';
+    }
+
+    /* Update status badge */
+    if (statusEl && data.status) {
+      const labels = { ok:'● Live', error:'✗ Error', never:'○ Never Run', no_api_key:'⚠ No API Key' };
+      const colors = { ok:'var(--positive)', error:'var(--scarlet)', never:'var(--text-400)', no_api_key:'var(--gold)' };
+      statusEl.textContent = labels[data.status] || data.status;
+      statusEl.style.color = colors[data.status] || 'var(--text-300)';
+    }
+
+    /* Update price ticker strip if hourly refresh returned prices */
+    if (freq === 'hourly' && data.prices && Object.keys(data.prices).length) {
+      const fmtMap = {
+        vix:    v => v.toFixed(2),
+        btc:    v => '$' + v.toLocaleString('en-US', {maximumFractionDigits: 0}),
+        eurusd: v => v.toFixed(4), gbpusd: v => v.toFixed(4),
+        audusd: v => v.toFixed(4), nzdusd: v => v.toFixed(4),
+        usdchf: v => v.toFixed(4), usdcad: v => v.toFixed(4),
+        goldbdt: v => v.toLocaleString('en-US', {maximumFractionDigits: 0}),
+      };
+      for (const [asset, info] of Object.entries(data.prices)) {
+        /* price tiles rendered server-side; find by iterating ticker strip children */
+        const tiles = document.querySelectorAll('[data-feed-asset="' + asset + '"]');
+        tiles.forEach(tile => {
+          const priceEl  = tile.querySelector('[data-feed-price]');
+          const pctEl    = tile.querySelector('[data-feed-pct]');
+          if (priceEl) priceEl.textContent = (fmtMap[asset] || (v => v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})))(info.price);
+          if (pctEl) {
+            const pct = info.day_pct;
+            pctEl.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
+            pctEl.style.color = pct >= 0 ? 'var(--positive)' : 'var(--scarlet)';
+          }
+        });
+      }
+      /* Also refresh the "Prices as of" header timestamp */
+      if (data.fetched_at) {
+        const headerTs = document.getElementById('prices-fetched-at');
+        if (headerTs) headerTs.textContent = 'Prices as of ' + data.fetched_at.slice(0,16).replace('T',' ') + ' UTC';
+      }
+    }
+
+    /* Brief success flash on the button */
+    btn.textContent = '✓';
+    btn.style.color = 'var(--positive)';
+    btn.style.borderColor = 'var(--positive)';
+    setTimeout(() => { btn.textContent = '↻'; btn.style.color='var(--text-300)'; btn.style.borderColor='var(--bg-400)'; }, 1500);
+
+  } catch (err) {
+    if (tsEl) { tsEl.style.color='var(--scarlet)'; tsEl.textContent='✗ Network error'; }
+  } finally {
+    btn.classList.remove('ldf-spinning');
+    btn.disabled = false;
+  }
+}
+
+async function clearUserPortfolio() {
+  try {
+    await fetch("/api/portfolio/save", { method: "DELETE" });
+    window.location.href = "/dashboard";
+  } catch (e) {
+    alert("Failed to clear portfolio: " + e.message);
+  }
+}
+
+// Scroll to My Portfolio section if coming from save redirect
+if (window.location.hash === "#my-portfolio") {
+  const el = document.getElementById("my-portfolio");
+  if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 300);
+}
+
+(function () {
+  /* ── ML allocation donut ── */
+  {% if portfolio_data %}
+  const weights = {{ portfolio_data.weights.regime_adjusted | tojson }};
+  buildAllocationDonut("allocChart", weights);
+  {% endif %}
+
+  /* ── My Portfolio donut ── */
+  {% if user_portfolio %}
+  buildAllocationDonut("userAllocChart", {{ user_portfolio.weights | tojson }});
+  {% endif %}
+
+  /* ── stress waterfall ── */
+  {% if stress_data %}
+  const stressScenarios = {{ stress_data | tojson }};
+  const sorted = Object.entries(stressScenarios)
+    .sort(([, a], [, b]) => a.portfolio_return - b.portfolio_return);
+  const labels = sorted.map(([k]) => k.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()));
+  const values = sorted.map(([, v]) => v.portfolio_return);
+  buildWaterfallChart("waterfallChart", labels, values);
+  {% endif %}
+
+  /* ── drawdown chart ── */
+  {% if drawdown_data %}
+  const dd = {{ drawdown_data | tojson }};
+  const dates = dd.dates;
+  const series = {};
+  {% if portfolio_data %}
+  const assets = Object.keys({{ portfolio_data.weights.regime_adjusted | tojson }});
+  assets.forEach(a => { if (dd[a]) series[a] = dd[a]; });
+  {% endif %}
+  buildDrawdownChart("drawdownChart", dates, series);
+  {% endif %}
+})();
+</script>
+{% endblock %}

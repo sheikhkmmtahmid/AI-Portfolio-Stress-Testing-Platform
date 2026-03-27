@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} | AI Portfolio Stress Testing Platform</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%231a0a00'/><rect width='32' height='32' rx='7' fill='none' stroke='%23D3A625' stroke-width='1.5' opacity='0.6'/><text x='16' y='24' font-size='22' font-weight='700' font-family='Georgia,serif' text-anchor='middle' fill='%23D3A625'>%CE%A3</text></svg>">
+  <link rel="stylesheet" href="/static/css/theme.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<div class="app-wrapper">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <a href="/" class="brand-logo">
+        <div class="brand-shield" style="
+          width:36px; height:36px; border-radius:8px; flex-shrink:0;
+          background:linear-gradient(135deg,#1a0a00,#2a1500);
+          border:1px solid rgba(211,166,37,0.35);
+          display:flex; align-items:center; justify-content:center;
+          box-shadow:0 0 12px rgba(211,166,37,0.15);">
+          <span style="
+            font-family:'Space Grotesk',sans-serif;
+            font-size:20px; font-weight:700; line-height:1;
+            background:linear-gradient(160deg,#F0C040,#D3A625);
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text;">Σ</span>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">Sigma</div>
+          <div class="brand-sub">Risk Analytics</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Main</div>
+
+      <a href="/" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}" title="Dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a href="/portfolio" class="nav-item {% if active_page == 'portfolio' %}active{% endif %}" title="Portfolio Builder">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span class="nav-label">Portfolio Builder</span>
+      </a>
+
+      <a href="/scenarios" class="nav-item {% if active_page == 'scenarios' %}active{% endif %}" title="Scenario Studio">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        <span class="nav-label">Scenario Studio</span>
+      </a>
+
+      <a href="/results" class="nav-item {% if active_page == 'results' %}active{% endif %}" title="Results">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span class="nav-label">Results</span>
+        <span class="nav-badge">LIVE</span>
+      </a>
+
+      <div class="nav-section-label" style="margin-top:8px;">Reference</div>
+
+      <a href="/methodology" class="nav-item {% if active_page == 'methodology' %}active{% endif %}" title="Methodology">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <span class="nav-label">Methodology</span>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <!-- Collapsed state: pulsing regime dot centered -->
+      <div class="regime-dot-mini {{ regime_data.regime if regime_data else 'credit_stress' }}"
+           title="Regime: {{ (regime_data.regime if regime_data else 'credit_stress') | replace('_',' ') | title }}"></div>
+      <!-- Expanded state: full regime info -->
+      <div class="sidebar-footer-content">
+        <div class="sidebar-footer-label">Current Regime</div>
+        <div class="regime-badge {{ regime_data.regime if regime_data else 'credit_stress' }}">
+          <span class="regime-dot"></span>
+          {{ (regime_data.regime if regime_data else 'credit_stress') | replace('_',' ') | title }}
+        </div>
+        <div style="font-size:10px; color:var(--text-400); margin-top:6px; white-space:nowrap;">
+          Conf. {{ "%.0f"|format((regime_data.confidence * 100) if regime_data else 100) }}%
+          &nbsp;·&nbsp; {{ (regime_data.date if regime_data else '—')[:10] }}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Main Content ── -->
+  <div class="main-content">
+
+    <!-- Top Header -->
+    <header class="top-header">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button class="mobile-menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="header-title">{% block page_title %}Dashboard{% endblock %}</div>
+      </div>
+
+      <div class="header-meta">
+        {% if portfolio_data %}
+        <div class="header-stat">
+          <div class="header-stat-label">Expected Return</div>
+          <div class="header-stat-value {% if portfolio_data.metrics.expected_return_annual > 0 %}text-positive{% else %}text-negative{% endif %}">
+            {{ "%+.1f"|format(portfolio_data.metrics.expected_return_annual * 100) }}%
+          </div>
+        </div>
+        <div class="header-divider"></div>
+        <div class="header-stat">
+          <div class="header-stat-label">Sharpe</div>
+          <div class="header-stat-value text-gold">{{ "%.2f"|format(portfolio_data.metrics.sharpe_ratio) }}</div>
+        </div>
+        <div class="header-divider"></div>
+        <div class="header-stat">
+          <div class="header-stat-label">VaR 95%</div>
+          <div class="header-stat-value text-negative">{{ "%.1f"|format(portfolio_data.metrics.var_95_monthly * 100) }}%</div>
+        </div>
+        <div class="header-divider"></div>
+        {% endif %}
+        <div class="header-stat">
+          <div class="header-stat-label">As of</div>
+          <div class="header-stat-value">{{ (portfolio_data.as_of_date[:10] if portfolio_data else '—') }}</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-body">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Site Footer Disclaimer -->
+    <footer style="border-top:1px solid var(--bg-500); margin-top:32px;
+                   padding:14px 28px; display:flex; gap:12px; align-items:flex-start;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text-400)"
+           stroke-width="2" style="flex-shrink:0; margin-top:2px;">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <p style="font-size:11px; color:var(--text-400); line-height:1.6; margin:0;">
+        <strong style="color:var(--text-300);">Disclaimer:</strong>
+        This platform is intended for research and educational purposes only and does not constitute
+        financial advice. All outputs are model-generated estimates based on historical data.
+        The investable universe covers SPX, NDX, Gold and BTC only.
+        FTSE 100 and FX instruments (EUR/USD, GBP/USD, DXY) are used as macro conditioning
+        inputs and do not appear in portfolio allocations or stress test returns.
+        Past performance and modelled scenarios do not guarantee future results.
+      </p>
+    </footer>
+
+  </div><!-- .main-content -->
+</div><!-- .app-wrapper -->
+
+<script src="/static/js/main.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

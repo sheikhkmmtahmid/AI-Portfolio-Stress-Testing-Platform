@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% block title %}Methodology{% endblock %}
+{% block page_title %}Methodology{% endblock %}
+
+{% block head %}
+<style>
+  .method-phase {
+    background: var(--bg-700);
+    border: 1px solid var(--bg-500);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .method-phase:hover { border-left-color: var(--scarlet); }
+  .method-phase-num {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 48px; font-weight: 800; font-family: 'IBM Plex Mono', monospace;
+    color: var(--bg-500); line-height: 1;
+  }
+  .method-phase-title {
+    font-size: 17px; font-weight: 700; color: var(--text-100);
+    font-family: 'Playfair Display', serif; margin-bottom: 6px;
+  }
+  .method-phase-sub {
+    font-size: 12px; color: var(--gold); text-transform: uppercase;
+    letter-spacing: .08em; margin-bottom: 10px;
+  }
+  .method-phase-body { font-size: 13px; color: var(--text-300); line-height: 1.65; }
+  .method-phase-body ul { margin: 8px 0 0 18px; padding: 0; }
+  .method-phase-body li { margin-bottom: 4px; }
+
+  .formula-box {
+    background: var(--bg-800); border: 1px solid var(--bg-500); border-radius: 6px;
+    padding: 12px 16px; margin: 12px 0;
+    font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--gold-pale);
+    overflow-x: auto; white-space: pre;
+  }
+
+  .tag-group { display:flex; gap:6px; flex-wrap:wrap; margin-top:10px; }
+  .tech-tag {
+    background: var(--bg-500); color: var(--text-200); border-radius:4px;
+    padding:3px 9px; font-size:11px; border:1px solid var(--bg-500);
+  }
+  .tech-tag.highlight { background: var(--gold-faint); border-color: var(--gold); color: var(--gold); }
+
+  .metric-grid-sm { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:12px; }
+  .metric-sm { background:var(--bg-600); border-radius:6px; padding:10px 12px; }
+  .metric-sm-label { font-size:10px; color:var(--text-400); text-transform:uppercase; }
+  .metric-sm-val   { font-size:16px; font-weight:700; font-family:'IBM Plex Mono',monospace; color:var(--gold); margin-top:2px; }
+
+  .pipeline-arrow {
+    text-align:center; color:var(--text-400); font-size:18px; margin:4px 0; line-height:1;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Header ─────────────────────────────────────────────────────────────── -->
+<div class="card" style="margin-bottom:28px; border-left:3px solid var(--scarlet);">
+  <div style="font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--text-100); margin-bottom:8px;">
+    AI Portfolio Stress Testing
+  </div>
+  <div style="font-size:14px; color:var(--text-300); line-height:1.7; max-width:780px;">
+    This platform combines machine learning forecasting, Hidden Markov Model regime detection,
+    Mean-Variance Optimisation, and SHAP explainability to deliver a fully integrated
+    risk analytics workflow. The pipeline processes macroeconomic and market data end-to-end
+    — from raw ingestion through to plain-English portfolio narratives.
+  </div>
+  <div class="tag-group" style="margin-top:14px;">
+    <span class="tech-tag highlight">ElasticNet</span>
+    <span class="tech-tag highlight">XGBoost</span>
+    <span class="tech-tag highlight">HMM Regime</span>
+    <span class="tech-tag highlight">Ledoit-Wolf</span>
+    <span class="tech-tag highlight">Max-Sharpe MVO</span>
+    <span class="tech-tag highlight">SHAP</span>
+    <span class="tech-tag">scikit-learn</span>
+    <span class="tech-tag">FastAPI</span>
+    <span class="tech-tag">pandas / numpy</span>
+    <span class="tech-tag">Chart.js</span>
+  </div>
+</div>
+
+<!-- ── Pipeline phases ────────────────────────────────────────────────────── -->
+
+<div class="method-phase">
+  <div class="method-phase-num">01</div>
+  <div class="method-phase-sub">Data Ingestion</div>
+  <div class="method-phase-title">Macroeconomic & Market Data Pipeline</div>
+  <div class="method-phase-body">
+    Raw data is sourced from FRED (Federal Reserve), ECB, and Yahoo Finance.
+    The pipeline collects US and European macroeconomic indicators alongside
+    asset price series for S&P 500, Nasdaq 100, Gold, and Bitcoin.
+    <ul>
+      <li>US macro: Fed Funds Rate, CPI YoY, industrial production, unemployment, yield spreads</li>
+      <li>European macro: ECB policy rate, Euro-area CPI, HICP</li>
+      <li>Market prices: SPX, NDX, GLD, BTC-USD — monthly frequency</li>
+      <li>Output: unified CSV with forward-filled gaps and date-aligned index</li>
+    </ul>
+  </div>
+  <div class="tag-group">
+    <span class="tech-tag">pandas_datareader</span>
+    <span class="tech-tag">yfinance</span>
+    <span class="tech-tag">FRED API</span>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">02</div>
+  <div class="method-phase-sub">Feature Engineering</div>
+  <div class="method-phase-title">Macro & Technical Feature Construction</div>
+  <div class="method-phase-body">
+    Transforms raw series into predictive features used by the ML models.
+    <ul>
+      <li>Yield curve spread: 10Y − 2Y (inversion indicator)</li>
+      <li>Momentum: 1-, 3-, 6-month rolling returns for each asset</li>
+      <li>Volatility: 3- and 6-month rolling standard deviation</li>
+      <li>Macro lags: 1–3 month lags on CPI, Fed Funds, industrial production</li>
+      <li>Cross-asset ratios: gold/equity relative strength</li>
+    </ul>
+    <div class="formula-box">feature_t = f(macro_{t-1..t-3}, price_momentum_{1m,3m,6m}, rolling_vol_{3m,6m})</div>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">03</div>
+  <div class="method-phase-sub">Regime Detection</div>
+  <div class="method-phase-title">Hidden Markov Model — Market State Classification</div>
+  <div class="method-phase-body">
+    A Gaussian Hidden Markov Model classifies monthly market states.
+    States are labelled by their return/volatility characteristics.
+    <ul>
+      <li>6 regimes: Bull Trend, Low-Vol Bull, Recovery, High-Vol, Credit Stress, Bear Market</li>
+      <li>Observations: monthly returns + rolling volatility for SPX, NDX, Gold</li>
+      <li>Parameters estimated via Baum-Welch EM algorithm</li>
+      <li>Current regime influences portfolio tilt weights in Phase 7</li>
+    </ul>
+    <div class="formula-box">P(regime_t | regime_{t-1}) via transition matrix A
+observation prob: N(μ_k, Σ_k) per state k</div>
+  </div>
+  <div class="tag-group">
+    <span class="tech-tag">hmmlearn</span>
+    <span class="tech-tag">GaussianHMM</span>
+    <span class="tech-tag">Baum-Welch</span>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">04–05</div>
+  <div class="method-phase-sub">Macro Model Training</div>
+  <div class="method-phase-title">Macro Index Construction & Asset Model Training</div>
+  <div class="method-phase-body">
+    Two complementary steps. Phase 4 builds composite macro indices via PCA;
+    Phase 5 trains asset-level linear models as a warm-up for Phase 6.
+    <ul>
+      <li>PCA on macro block → growth, inflation, financial-conditions indices</li>
+      <li>OLS regressions per asset; diagnostics: Durbin-Watson, VIF, residual ACF</li>
+    </ul>
+  </div>
+  <div class="tag-group">
+    <span class="tech-tag">PCA</span>
+    <span class="tech-tag">OLS</span>
+    <span class="tech-tag">statsmodels</span>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">06</div>
+  <div class="method-phase-sub">ML Ensemble Forecasting</div>
+  <div class="method-phase-title">ElasticNet + XGBoost Return Forecasting</div>
+  <div class="method-phase-body">
+    Two-model ensemble trained per asset on lagged macro + technical features.
+    A two-pass training strategy handles BTC's shorter data history.
+    <ul>
+      <li><strong>ElasticNet</strong>: L1 + L2 regularisation — α·ρ·‖β‖₁ + α·(1−ρ)/2·‖β‖₂²</li>
+      <li><strong>XGBoost</strong>: gradient-boosted trees — captures non-linear macro interactions</li>
+      <li>Walk-forward cross-validation (5 folds) prevents look-ahead bias</li>
+      <li>Ensemble: simple average of ElasticNet and XGBoost predictions</li>
+      <li>Two-pass: SPX/NDX/Gold trained on full history; BTC trained on 2010+ subset</li>
+    </ul>
+    <div class="formula-box">ŷ_t = 0.5 · ŷ_EN(X_{t-1}) + 0.5 · ŷ_XGB(X_{t-1})</div>
+  </div>
+  <div class="tag-group highlight">
+    <span class="tech-tag highlight">ElasticNet</span>
+    <span class="tech-tag highlight">XGBoost</span>
+    <span class="tech-tag">walk-forward CV</span>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">06.1</div>
+  <div class="method-phase-sub">Hyperparameter Tuning</div>
+  <div class="method-phase-title">Grid Search + Rolling Validation</div>
+  <div class="method-phase-body">
+    Extended hyperparameter search to find optimal model configurations.
+    <ul>
+      <li>ElasticNet: 45 combinations of α ∈ {0.001…1.0} × l1_ratio ∈ {0.1…0.9}</li>
+      <li>XGBoost: 288 combinations of max_depth, n_estimators, learning_rate, subsample, colsample</li>
+      <li>Rolling validation: 9 expanding-window folds (min 36 months train, 6 months test)</li>
+      <li>Selection criterion: mean RMSE across rolling folds (lower = better)</li>
+    </ul>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">07</div>
+  <div class="method-phase-sub">Portfolio Optimisation</div>
+  <div class="method-phase-title">Mean-Variance Optimisation + Regime Tilts + Stress Testing</div>
+  <div class="method-phase-body">
+    Uses ensemble expected returns and Ledoit-Wolf shrinkage covariance to solve
+    for the Maximum-Sharpe tangency portfolio, then applies regime-based tilts.
+    <ul>
+      <li>Ledoit-Wolf shrinkage: Σ̂ = (1−δ)·S + δ·μ̂·I — reduces estimation error</li>
+      <li>Max-Sharpe MVO: max (μᵀw − r_f) / √(wᵀΣw) subject to Σwᵢ = 1, wᵢ ≥ 0</li>
+      <li>Regime tilts: ±5–15% weight adjustment based on HMM regime</li>
+      <li>20 stress scenarios covering GFC, COVID crash, dot-com, rate shock, etc.</li>
+      <li>Scenario returns: weighted sum of asset-level historical episode returns</li>
+    </ul>
+    <div class="formula-box">max_w  (μᵀw) / √(wᵀΣ̂w)
+s.t.   Σ wᵢ = 1,  wᵢ ≥ 0
+REGIME_TILT: w_adjusted = clip(w_base + tilt_Δ, 0, 1), renormalised</div>
+  </div>
+  <div class="tag-group">
+    <span class="tech-tag highlight">Ledoit-Wolf</span>
+    <span class="tech-tag highlight">Max-Sharpe</span>
+    <span class="tech-tag">scipy.optimize</span>
+    <span class="tech-tag">SLSQP</span>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">08</div>
+  <div class="method-phase-sub">Explainability</div>
+  <div class="method-phase-title">SHAP Feature Attribution + ElasticNet Coefficients</div>
+  <div class="method-phase-body">
+    Decomposes model predictions into feature-level contributions for transparency.
+    <ul>
+      <li>XGBoost: TreeSHAP — exact SHAP values, O(TLD) complexity</li>
+      <li>ElasticNet: LinearSHAP — analytical attribution = β_i · (x_i − E[x_i])</li>
+      <li>Portfolio exposure: Σᵢ(wᵢ · mean|SHAP|ᵢ_f) — weighted factor importance</li>
+      <li>Top features identified per asset; used by NarrativeEngine for plain-English text</li>
+    </ul>
+    <div class="formula-box">Portfolio factor exposure_f = Σ_i  weight_i · mean_k |SHAP_i(x_k, f)|</div>
+  </div>
+  <div class="tag-group">
+    <span class="tech-tag highlight">SHAP</span>
+    <span class="tech-tag">TreeExplainer</span>
+    <span class="tech-tag">LinearExplainer</span>
+  </div>
+</div>
+
+<div class="pipeline-arrow">↓</div>
+
+<div class="method-phase">
+  <div class="method-phase-num">09–10</div>
+  <div class="method-phase-sub">API & Dashboard</div>
+  <div class="method-phase-title">FastAPI REST Layer + Server-Rendered Analytics Dashboard</div>
+  <div class="method-phase-body">
+    Phase 9 exposes all pipeline outputs as REST endpoints with a NarrativeEngine
+    for plain-English explanations. Phase 10 delivers this full-screen dashboard.
+    <ul>
+      <li>FastAPI with Pydantic validation + CORS middleware</li>
+      <li>On-the-fly portfolio analysis: custom weights → Sharpe, VaR, risk contributions</li>
+      <li>NarrativeEngine: 6 narrative blocks (composition, regime, dominant factor, stress, diversification, hedge)</li>
+      <li>Jinja2 server-rendered templates — zero client-side framework dependency</li>
+      <li>Chart.js 4.4 — donut, waterfall, drawdown, factor, contribution charts</li>
+    </ul>
+  </div>
+  <div class="tag-group">
+    <span class="tech-tag highlight">FastAPI</span>
+    <span class="tech-tag">Jinja2</span>
+    <span class="tech-tag">Chart.js 4.4</span>
+    <span class="tech-tag">Uvicorn</span>
+  </div>
+</div>
+
+<!-- ── Risk metrics glossary ──────────────────────────────────────────────── -->
+<div class="card" style="margin-top:28px;">
+  <div class="card-header">
+    <div class="card-title">Risk Metrics Glossary</div>
+  </div>
+  <table class="data-table">
+    <thead><tr><th>Metric</th><th>Formula / Definition</th><th>Interpretation</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>VaR 95%</strong></td>
+        <td class="mono">5th percentile of return distribution</td>
+        <td>Maximum monthly loss not exceeded 95% of the time</td>
+      </tr>
+      <tr>
+        <td><strong>CVaR 95%</strong></td>
+        <td class="mono">E[r | r &lt; VaR₉₅]</td>
+        <td>Expected loss in the worst 5% of outcomes (tail risk)</td>
+      </tr>
+      <tr>
+        <td><strong>Sharpe Ratio</strong></td>
+        <td class="mono">(μ_p − r_f) / σ_p</td>
+        <td>Risk-adjusted return per unit of total volatility</td>
+      </tr>
+      <tr>
+        <td><strong>Diversification Ratio</strong></td>
+        <td class="mono">Σ(w_i · σ_i) / σ_portfolio</td>
+        <td>How much diversification reduces portfolio volatility; &gt;1 is good</td>
+      </tr>
+      <tr>
+        <td><strong>Max Drawdown</strong></td>
+        <td class="mono">min(cumret_t / max(cumret_{0..t}) − 1)</td>
+        <td>Worst peak-to-trough loss over the observed period</td>
+      </tr>
+      <tr>
+        <td><strong>Ledoit-Wolf</strong></td>
+        <td class="mono">Σ̂ = (1−δ)·S + δ·μ̂·I</td>
+        <td>Shrinkage estimator; δ chosen analytically to minimise MSE</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── Scope & Coverage Note ──────────────────────────────────────────────── -->
+<div style="margin-top:20px; padding:14px 18px;
+            background:var(--bg-700); border:1px solid var(--bg-500);
+            border-left:3px solid var(--gold); border-radius:8px;
+            display:flex; gap:12px; align-items:flex-start;">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)"
+       stroke-width="2" style="flex-shrink:0; margin-top:1px;">
+    <circle cx="12" cy="12" r="10"/>
+    <line x1="12" y1="8" x2="12" y2="12"/>
+    <line x1="12" y1="16" x2="12.01" y2="16"/>
+  </svg>
+  <div style="font-size:12px; color:var(--text-300); line-height:1.65;">
+    <span style="color:var(--gold); font-weight:600;">Scope note:</span>
+    The core portfolio universe is limited to SPX, NDX, Gold and BTC.
+    FTSE 100 and FX series (EUR/USD, GBP/USD, DXY) are ingested as macro
+    conditioning variables and feature inputs only; they do not currently
+    enter the portfolio allocation or stress test return calculations.
+    Extending the investable universe to include FTSE or FX instruments
+    would require additional asset-level sensitivity models and covariance
+    matrix expansion.
+  </div>
+</div>
+
+{% endblock %}

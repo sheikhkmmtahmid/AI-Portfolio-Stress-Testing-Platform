@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+{% block title %}Portfolio Builder{% endblock %}
+{% block page_title %}Portfolio Builder{% endblock %}
+
+{% block head %}
+<style>
+  .weight-row { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .weight-row label { width:110px; font-size:13px; color:var(--text-200); flex-shrink:0; }
+  .weight-row input[type=range] { flex:1; }
+  .weight-row .pct-display {
+    width:52px; text-align:right; font-family:'IBM Plex Mono',monospace;
+    font-size:14px; font-weight:600; color:var(--gold);
+  }
+  .sum-indicator {
+    display: inline-block;
+    min-width: 72px; text-align: center;
+    padding: 6px 12px; border-radius: 6px; font-size: 13px;
+    font-family: 'IBM Plex Mono', monospace; font-weight: 600;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .sum-ok   { background: rgba(34,197,94,0.12); color: var(--positive); border: 1px solid rgba(34,197,94,0.3); }
+  .sum-warn { background: rgba(239,68,68,0.12); color: var(--negative); border: 1px solid rgba(239,68,68,0.3); }
+  .result-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:16px; }
+  .result-cell { background:var(--bg-600); border-radius:8px; padding:14px 16px; }
+  .result-cell-label { font-size:11px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; }
+  .result-cell-value { font-size:22px; font-weight:700; font-family:'IBM Plex Mono',monospace; margin-top:4px; }
+  .contrib-row { display:flex; align-items:center; gap:10px; padding:6px 0; border-bottom:1px solid var(--bg-500); }
+  .contrib-label { width:100px; font-size:12px; color:var(--text-300); }
+  .contrib-bar-track { flex:1; height:6px; background:var(--bg-500); border-radius:3px; overflow:hidden; }
+  .contrib-bar-fill { height:100%; border-radius:3px; transition:width .4s ease; }
+  .contrib-value { width:60px; text-align:right; font-size:12px; font-family:'IBM Plex Mono',monospace; color:var(--text-200); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="grid-2-1">
+
+  <!-- ── Left: controls ── -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Weight Allocation</div>
+      <div class="card-badge">Step 1 of 3</div>
+    </div>
+
+    <div style="background:rgba(211,166,37,0.08); border:1px solid rgba(211,166,37,0.2);
+                border-radius:7px; padding:10px 14px; margin:16px 20px; font-size:12px;
+                color:var(--text-300); line-height:1.6;">
+      <strong style="color:var(--gold);">Step 1 — Set your allocation.</strong>
+      Drag the sliders until the sum equals 100%, then click <strong style="color:var(--text-200);">Analyse Portfolio</strong>
+      to compute live risk metrics. When satisfied, proceed to
+      <a href="/scenarios" style="color:var(--gold);">Scenario Studio →</a> to stress test these weights
+      against historical crises.
+    </div>
+
+    <div id="sliders" style="padding: 0 20px;">
+      {% set assets = [('spx','S&P 500','#AE0001'),('ndx','Nasdaq 100','#D3A625'),('gold','Gold','#C0A060'),('btc','Bitcoin','#4FA8DE')] %}
+      {% set defaults = {'spx':0.35,'ndx':0.30,'gold':0.25,'btc':0.10} %}
+      {% for asset, label, color in assets %}
+      <div class="weight-row">
+        <label>
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:{{ color }};margin-right:6px;"></span>
+          {{ label }}
+        </label>
+        <input type="range" id="slider_{{ asset }}" min="0" max="100" step="1"
+               value="{{ (portfolio_data.weights.regime_adjusted.get(asset, 0) * 100) | round | int if portfolio_data else (defaults[asset] * 100) | int }}"
+               oninput="onSlider('{{ asset }}')"
+               style="accent-color:{{ color }};">
+        <div class="pct-display" id="pct_{{ asset }}">
+          {% if portfolio_data %}{{ "%.0f"|format(portfolio_data.weights.regime_adjusted.get(asset, 0) * 100) }}%
+          {% else %}{{ (defaults[asset] * 100) | int }}%{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; margin:16px 20px; flex-wrap:nowrap;">
+      <div>
+        <span style="font-size:12px; color:var(--text-400);">Sum: </span>
+        <span id="sumDisplay" class="sum-indicator sum-ok">100%</span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-ghost" onclick="resetWeights()">Reset</button>
+        <button class="btn btn-gold" id="analyzeBtn" onclick="runAnalysis()">Analyse Portfolio</button>
+      </div>
+    </div>
+
+    <div id="analyzeError" style="display:none; color:var(--scarlet); font-size:12px; margin-top:4px;"></div>
+
+    <!-- Regime comparison -->
+    {% if portfolio_data %}
+    <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--bg-500);">
+      <div style="font-size:11px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px;">
+        Regime-Adjusted Weights (Pipeline Output)
+      </div>
+      {% for asset, label, color in assets %}
+      {% set rw = portfolio_data.weights.regime_adjusted.get(asset, 0) %}
+      {% set bw = portfolio_data.weights.base.get(asset, 0) %}
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <div style="width:90px; font-size:12px; color:var(--text-300);">{{ label }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--gold);">
+          {{ "%.1f"|format(rw * 100) }}%
+        </div>
+        <div style="font-size:11px; color:{% if rw > bw %}var(--positive){% elif rw < bw %}var(--scarlet){% else %}var(--text-400){% endif %};">
+          {% if rw > bw %}▲ +{{ "%.1f"|format((rw - bw) * 100) }}pp
+          {% elif rw < bw %}▼ {{ "%.1f"|format((rw - bw) * 100) }}pp
+          {% else %}—{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- ── Right: results ── -->
+  <div>
+    <!-- Metrics card -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <div class="card-title">Portfolio Metrics</div>
+        <div class="card-badge" id="resultsBadge">Live</div>
+      </div>
+
+      <div id="resultsPlaceholder" style="color:var(--text-400); font-size:13px; padding:8px 0;">
+        Adjust weights and click <strong style="color:var(--gold);">Analyse Portfolio</strong> to compute metrics.
+      </div>
+
+      <div id="resultsContent" style="display:none;">
+        <!-- Save to Dashboard -->
+        <div id="saveBar" style="display:flex; align-items:center; justify-content:space-between;
+                                  background:rgba(211,166,37,0.08); border:1px solid rgba(211,166,37,0.2);
+                                  border-radius:7px; padding:8px 14px; margin-bottom:14px;">
+          <span style="font-size:12px; color:var(--text-300);">Pin this portfolio to the Dashboard for comparison.</span>
+          <button class="btn btn-gold" id="saveBtn" onclick="saveToDashboard()" style="padding:5px 14px; font-size:12px;">
+            Save to Dashboard
+          </button>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-cell">
+            <div class="result-cell-label">Exp. Return</div>
+            <div class="result-cell-value" id="res_er" style="color:var(--gold);">—</div>
+          </div>
+          <div class="result-cell">
+            <div class="result-cell-label">Sharpe Ratio</div>
+            <div class="result-cell-value" id="res_sharpe" style="color:var(--gold);">—</div>
+          </div>
+          <div class="result-cell">
+            <div class="result-cell-label">Volatility</div>
+            <div class="result-cell-value" id="res_vol">—</div>
+          </div>
+          <div class="result-cell">
+            <div class="result-cell-label">VaR 95%</div>
+            <div class="result-cell-value text-negative" id="res_var">—</div>
+          </div>
+          <div class="result-cell">
+            <div class="result-cell-label">CVaR 95%</div>
+            <div class="result-cell-value text-negative" id="res_cvar">—</div>
+          </div>
+          <div class="result-cell">
+            <div class="result-cell-label">Div. Ratio</div>
+            <div class="result-cell-value" id="res_div">—</div>
+          </div>
+        </div>
+
+        <!-- Contribution bars -->
+        <div style="font-size:11px; color:var(--text-400); text-transform:uppercase; letter-spacing:.06em; margin:12px 0 8px;">
+          Risk Contribution
+        </div>
+        <div id="contribBars"></div>
+      </div>
+    </div>
+
+    <!-- Allocation donut -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Allocation Preview</div>
+      </div>
+      <div class="chart-container" style="height:250px;">
+        <canvas id="portfolioDonut"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const DEFAULT_WEIGHTS = { spx: 35, ndx: 30, gold: 25, btc: 10 };
+const ASSET_COLORS = { spx: "#AE0001", ndx: "#D3A625", gold: "#C0A060", btc: "#4FA8DE" };
+const ASSETS = ["spx", "ndx", "gold", "btc"];
+
+function getCurrentWeights() {
+  const w = {};
+  ASSETS.forEach(a => { w[a] = parseInt(document.getElementById(`slider_${a}`).value); });
+  return w;
+}
+
+function getWeightSum() {
+  return Object.values(getCurrentWeights()).reduce((s, v) => s + v, 0);
+}
+
+function updateSumIndicator() {
+  const sum = getWeightSum();
+  const el  = document.getElementById("sumDisplay");
+  el.textContent = sum + "%";
+  el.className = "sum-indicator " + (sum === 100 ? "sum-ok" : "sum-warn");
+}
+
+function onSlider(asset) {
+  const val = parseInt(document.getElementById(`slider_${asset}`).value);
+  document.getElementById(`pct_${asset}`).textContent = val + "%";
+  updateSumIndicator();
+  refreshDonut();
+}
+
+function resetWeights() {
+  ASSETS.forEach(a => {
+    document.getElementById(`slider_${a}`).value = DEFAULT_WEIGHTS[a];
+    document.getElementById(`pct_${a}`).textContent = DEFAULT_WEIGHTS[a] + "%";
+  });
+  updateSumIndicator();
+  refreshDonut();
+}
+
+function refreshDonut() {
+  const raw = getCurrentWeights();
+  const total = Object.values(raw).reduce((s,v)=>s+v,0);
+  if (total === 0) return;
+  const norm = {};
+  ASSETS.forEach(a => norm[a] = raw[a] / total);
+  buildAllocationDonut("portfolioDonut", norm);
+}
+
+async function runAnalysis() {
+  const sum = getWeightSum();
+  const errEl = document.getElementById("analyzeError");
+  if (sum !== 100) {
+    errEl.style.display = "block";
+    errEl.textContent = `Weights must sum to 100% (currently ${sum}%).`;
+    return;
+  }
+  errEl.style.display = "none";
+
+  const btn = document.getElementById("analyzeBtn");
+  showLoading(btn, "Analysing…");
+
+  const raw = getCurrentWeights();
+  const weights = {};
+  ASSETS.forEach(a => weights[a] = raw[a] / 100);
+
+  try {
+    const data = await apiPost("/api/portfolio/analyze", { weights });
+    _lastAnalysisResult = data;
+    showResults(data);
+    document.getElementById("resultsBadge").textContent = new Date().toLocaleTimeString();
+  } catch (e) {
+    showToast("Analysis failed: " + e.message, "error");
+  } finally {
+    hideLoading(btn);
+  }
+}
+
+function showResults(data) {
+  document.getElementById("resultsPlaceholder").style.display = "none";
+  document.getElementById("resultsContent").style.display = "block";
+
+  // API returns flat keys: expected_return_annual, sharpe_ratio_annual, etc.
+  const er = data.expected_return_annual;
+  const erEl = document.getElementById("res_er");
+  erEl.textContent = fmtPct(er);
+  erEl.style.color = er > 0 ? "var(--positive)" : "var(--scarlet)";
+
+  document.getElementById("res_sharpe").textContent = fmtNum(data.sharpe_ratio_annual);
+  document.getElementById("res_vol").textContent    = fmtPct(data.volatility_annual, 2, false);
+  document.getElementById("res_var").textContent    = fmtPct(data.var_95_monthly, 2, false);
+  document.getElementById("res_cvar").textContent   = fmtPct(data.cvar_95_monthly, 2, false);
+  document.getElementById("res_div").textContent    = fmtNum(data.diversification_ratio);
+
+  // contribution bars — using asset_contributions_annual
+  const contribs  = data.asset_contributions_annual || {};
+  const container = document.getElementById("contribBars");
+  container.innerHTML = "";
+  const maxVal = Math.max(...Object.values(contribs).map(Math.abs), 0.001);
+  ASSETS.forEach(a => {
+    if (!(a in contribs)) return;
+    const val  = contribs[a];
+    const pct  = Math.abs(val) / maxVal * 100;
+    const row  = document.createElement("div");
+    row.className = "contrib-row";
+    row.innerHTML = `
+      <div class="contrib-label">${ASSET_LABELS[a] || a.toUpperCase()}</div>
+      <div class="contrib-bar-track">
+        <div class="contrib-bar-fill" style="width:${pct}%; background:${ASSET_COLORS[a]};"></div>
+      </div>
+      <div class="contrib-value">${fmtPct(val, 3, false)}</div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+let _lastAnalysisResult = null;
+
+async function saveToDashboard() {
+  if (!_lastAnalysisResult) return;
+  const btn = document.getElementById("saveBtn");
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Saving…";
+
+  const raw = getCurrentWeights();
+  const weights = {};
+  ASSETS.forEach(a => weights[a] = raw[a] / 100);
+
+  try {
+    await apiPost("/api/portfolio/save", {
+      weights,
+      metrics: _lastAnalysisResult,
+    });
+    btn.textContent = "✓ Saved — redirecting…";
+    btn.style.background = "var(--positive)";
+    setTimeout(() => { window.location.href = "/dashboard#my-portfolio"; }, 800);
+  } catch (e) {
+    btn.textContent = origText;
+    btn.disabled = false;
+    showToast("Save failed: " + e.message, "error");
+  }
+}
+
+/* init — defer chart render until layout is stable */
+requestAnimationFrame(() => requestAnimationFrame(() => refreshDonut()));
+updateSumIndicator();
+</script>
+{% endblock %}
