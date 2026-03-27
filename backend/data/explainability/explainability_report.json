@@ -1,0 +1,389 @@
+{
+  "assets": {
+    "spx": {
+      "en_active_features": 1,
+      "en_total_features": 20,
+      "xgb_top_feature": "us_cpi_yoy",
+      "en_top_feature": "all_zero",
+      "latest_explanation": {
+        "asset": "spx",
+        "actual_return": -0.043516,
+        "elastic_net": {
+          "prediction": 0.006114,
+          "error": 0.04963,
+          "top_drivers": [
+            {
+              "feature": "us2y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us10y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "yield_spread",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us_cpi_yoy",
+              "shap_value": -0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "high_yield_spread",
+              "shap_value": -0.0,
+              "direction": "bearish"
+            }
+          ]
+        },
+        "xgboost": {
+          "prediction": -0.013752,
+          "error": 0.029763,
+          "top_drivers": [
+            {
+              "feature": "gold_return",
+              "shap_value": -0.014611,
+              "direction": "bearish"
+            },
+            {
+              "feature": "high_yield_spread",
+              "shap_value": -0.004969,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us10y_yield",
+              "shap_value": -0.004278,
+              "direction": "bearish"
+            },
+            {
+              "feature": "vix_level",
+              "shap_value": 0.003747,
+              "direction": "bullish"
+            },
+            {
+              "feature": "us_cpi_yoy",
+              "shap_value": 0.003646,
+              "direction": "bullish"
+            }
+          ]
+        },
+        "raw_feature_snapshot": {
+          "us2y_yield": 3.38,
+          "us10y_yield": 3.97,
+          "yield_spread": 0.59,
+          "us_cpi_yoy": 0.02434,
+          "high_yield_spread": 3.12,
+          "vix_level": 19.86,
+          "spx_vol_3m": 0.011268,
+          "eurusd_return": -0.003169,
+          "gbpusd_return": -0.015183,
+          "spx_return": -0.008706,
+          "ndx_return": -0.023455,
+          "gold_return": 0.082319,
+          "ecb_level": 2025.0,
+          "ecb_yoy": 0.000494,
+          "regime_confidence": 0.840939,
+          "regime_label": "credit_stress"
+        }
+      }
+    },
+    "ndx": {
+      "en_active_features": 2,
+      "en_total_features": 20,
+      "xgb_top_feature": "us_cpi_yoy",
+      "en_top_feature": "us_cpi_yoy",
+      "latest_explanation": {
+        "asset": "ndx",
+        "actual_return": -0.037847,
+        "elastic_net": {
+          "prediction": 0.009971,
+          "error": 0.047819,
+          "top_drivers": [
+            {
+              "feature": "us_cpi_yoy",
+              "shap_value": 0.000353,
+              "direction": "bullish"
+            },
+            {
+              "feature": "us2y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us10y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "yield_spread",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "high_yield_spread",
+              "shap_value": -0.0,
+              "direction": "bearish"
+            }
+          ]
+        },
+        "xgboost": {
+          "prediction": 0.017636,
+          "error": 0.055483,
+          "top_drivers": [
+            {
+              "feature": "regime_confidence",
+              "shap_value": 0.01238,
+              "direction": "bullish"
+            },
+            {
+              "feature": "high_yield_spread",
+              "shap_value": -0.009677,
+              "direction": "bearish"
+            },
+            {
+              "feature": "ndx_return",
+              "shap_value": 0.007558,
+              "direction": "bullish"
+            },
+            {
+              "feature": "us2y_yield",
+              "shap_value": -0.007308,
+              "direction": "bearish"
+            },
+            {
+              "feature": "vix_level",
+              "shap_value": 0.006054,
+              "direction": "bullish"
+            }
+          ]
+        },
+        "raw_feature_snapshot": {
+          "us2y_yield": 3.38,
+          "us10y_yield": 3.97,
+          "yield_spread": 0.59,
+          "us_cpi_yoy": 0.02434,
+          "high_yield_spread": 3.12,
+          "vix_level": 19.86,
+          "spx_vol_3m": 0.011268,
+          "eurusd_return": -0.003169,
+          "gbpusd_return": -0.015183,
+          "spx_return": -0.008706,
+          "ndx_return": -0.023455,
+          "gold_return": 0.082319,
+          "ecb_level": 2025.0,
+          "ecb_yoy": 0.000494,
+          "regime_confidence": 0.840939,
+          "regime_label": "credit_stress"
+        }
+      }
+    },
+    "gold": {
+      "en_active_features": 1,
+      "en_total_features": 20,
+      "xgb_top_feature": "us_cpi_yoy",
+      "en_top_feature": "all_zero",
+      "latest_explanation": {
+        "asset": "gold",
+        "actual_return": -0.177587,
+        "elastic_net": {
+          "prediction": 0.006991,
+          "error": 0.184577,
+          "top_drivers": [
+            {
+              "feature": "us2y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us10y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "yield_spread",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us_cpi_yoy",
+              "shap_value": -0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "high_yield_spread",
+              "shap_value": -0.0,
+              "direction": "bearish"
+            }
+          ]
+        },
+        "xgboost": {
+          "prediction": 0.019299,
+          "error": 0.196886,
+          "top_drivers": [
+            {
+              "feature": "eurusd_return",
+              "shap_value": 0.0134,
+              "direction": "bullish"
+            },
+            {
+              "feature": "high_yield_spread",
+              "shap_value": -0.013169,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us10y_yield",
+              "shap_value": 0.005232,
+              "direction": "bullish"
+            },
+            {
+              "feature": "spx_vol_3m",
+              "shap_value": -0.005168,
+              "direction": "bearish"
+            },
+            {
+              "feature": "gbpusd_return",
+              "shap_value": 0.004822,
+              "direction": "bullish"
+            }
+          ]
+        },
+        "raw_feature_snapshot": {
+          "us2y_yield": 3.38,
+          "us10y_yield": 3.97,
+          "yield_spread": 0.59,
+          "us_cpi_yoy": 0.02434,
+          "high_yield_spread": 3.12,
+          "vix_level": 19.86,
+          "spx_vol_3m": 0.011268,
+          "eurusd_return": -0.003169,
+          "gbpusd_return": -0.015183,
+          "spx_return": -0.008706,
+          "ndx_return": -0.023455,
+          "gold_return": 0.082319,
+          "ecb_level": 2025.0,
+          "ecb_yoy": 0.000494,
+          "regime_confidence": 0.840939,
+          "regime_label": "credit_stress"
+        }
+      }
+    },
+    "btc": {
+      "en_active_features": 1,
+      "en_total_features": 20,
+      "xgb_top_feature": "us10y_yield",
+      "en_top_feature": "all_zero",
+      "latest_explanation": {
+        "asset": "btc",
+        "actual_return": 0.045561,
+        "elastic_net": {
+          "prediction": 0.107783,
+          "error": 0.062221,
+          "top_drivers": [
+            {
+              "feature": "us2y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us10y_yield",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "yield_spread",
+              "shap_value": 0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us_cpi_yoy",
+              "shap_value": -0.0,
+              "direction": "bearish"
+            },
+            {
+              "feature": "high_yield_spread",
+              "shap_value": -0.0,
+              "direction": "bearish"
+            }
+          ]
+        },
+        "xgboost": {
+          "prediction": 0.246855,
+          "error": 0.201294,
+          "top_drivers": [
+            {
+              "feature": "us10y_yield",
+              "shap_value": 0.326271,
+              "direction": "bullish"
+            },
+            {
+              "feature": "gold_return",
+              "shap_value": -0.069151,
+              "direction": "bearish"
+            },
+            {
+              "feature": "eurusd_return",
+              "shap_value": -0.066616,
+              "direction": "bearish"
+            },
+            {
+              "feature": "vix_level",
+              "shap_value": -0.046455,
+              "direction": "bearish"
+            },
+            {
+              "feature": "us_cpi_yoy",
+              "shap_value": 0.022658,
+              "direction": "bullish"
+            }
+          ]
+        },
+        "raw_feature_snapshot": {
+          "us2y_yield": 3.38,
+          "us10y_yield": 3.97,
+          "yield_spread": 0.59,
+          "us_cpi_yoy": 0.02434,
+          "high_yield_spread": 3.12,
+          "vix_level": 19.86,
+          "spx_vol_3m": 0.011268,
+          "eurusd_return": -0.003169,
+          "gbpusd_return": -0.015183,
+          "spx_return": -0.008706,
+          "ndx_return": -0.023455,
+          "gold_return": 0.082319,
+          "ecb_level": 2025.0,
+          "ecb_yoy": 0.000494,
+          "regime_confidence": 0.840939,
+          "regime_label": "credit_stress"
+        }
+      }
+    }
+  },
+  "cross_asset_summary": {
+    "top5_universal_drivers": [
+      {
+        "feature": "us10y_yield",
+        "avg_xgb_shap_across_assets": 0.04483575
+      },
+      {
+        "feature": "regime_confidence",
+        "avg_xgb_shap_across_assets": 0.022498749999999998
+      },
+      {
+        "feature": "us_cpi_yoy",
+        "avg_xgb_shap_across_assets": 0.017874
+      },
+      {
+        "feature": "eurusd_return",
+        "avg_xgb_shap_across_assets": 0.01632275
+      },
+      {
+        "feature": "spx_return",
+        "avg_xgb_shap_across_assets": 0.0159295
+      }
+    ],
+    "note": "Average XGBoost SHAP importance across SPX, NDX, Gold"
+  }
+}

@@ -1,0 +1,187 @@
+2026-03-27 00:03:39,257 | INFO | ============================================================
+2026-03-27 00:03:39,257 | INFO | Live Data Scheduler starting
+2026-03-27 00:03:39,257 | INFO | Backend root: D:\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\backend
+2026-03-27 00:03:39,257 | INFO | ============================================================
+2026-03-27 00:03:39,257 | INFO | Running startup data fetch (all frequencies)...
+2026-03-27 00:03:39,257 | INFO | ============================================================
+2026-03-27 00:03:39,258 | INFO | HOURLY JOB starting
+2026-03-27 00:03:39,258 | INFO | [HOURLY] Fetching live prices from Yahoo Finance...
+2026-03-27 00:03:39,530 | INFO |   SPX         6477.11  (-0.15%)
+2026-03-27 00:03:39,580 | INFO |   NDX        23599.40  (-0.18%)
+2026-03-27 00:03:39,659 | INFO |   GOLD        4397.80  (-0.20%)
+2026-03-27 00:03:39,716 | INFO |   BTC        68708.45  (-0.58%)
+2026-03-27 00:03:39,797 | INFO |   VIX           27.40  (-2.77%)
+2026-03-27 00:03:39,798 | INFO | [HOURLY] Done — saved 5 prices.
+2026-03-27 00:03:39,798 | INFO | HOURLY JOB done
+2026-03-27 00:03:39,798 | INFO | ============================================================
+2026-03-27 00:03:39,798 | INFO | DAILY JOB starting
+2026-03-27 00:03:39,799 | INFO | [DAILY] Fetching daily market data from Yahoo Finance...
+2026-03-27 00:03:39,836 | INFO |   spx        latest=6477.1602
+2026-03-27 00:03:39,874 | INFO |   ndx        latest=23586.9941
+2026-03-27 00:03:39,914 | INFO |   gold       latest=4397.7998
+2026-03-27 00:03:39,954 | INFO |   btc        latest=68708.4453
+2026-03-27 00:03:39,991 | INFO |   vix        latest=27.4400
+2026-03-27 00:03:40,024 | INFO |   us10y      latest=4.4160
+2026-03-27 00:03:40,057 | INFO |   us2y       latest=4.0950
+2026-03-27 00:03:40,090 | INFO |   dxy        latest=99.8740
+2026-03-27 00:03:40,127 | INFO |   eurusd     latest=1.1541
+2026-03-27 00:03:40,161 | INFO |   gbpusd     latest=1.3338
+2026-03-27 00:03:40,216 | INFO |   qqq        latest=573.7900
+2026-03-27 00:03:40,220 | INFO | [DAILY] Still same month as last feature row — skipping append.
+2026-03-27 00:03:40,225 | INFO | [PIPELINE] Running Phase 7 (portfolio construction)...
+2026-03-27 00:03:40,723 | INFO | [00:00:00] [START] Phase 7 started
+2026-03-27 00:03:40,724 | INFO | [00:00:00] [LOAD] Loading Phase 3/5/6 outputs
+2026-03-27 00:03:40,734 | INFO | [00:00:00] [LOAD] Features: (278, 41)  Regimes: (278, 44)  Phase6 metrics: ['btc', 'spx', 'ndx', 'gold']
+2026-03-27 00:03:40,734 | INFO | [00:00:00] [INFO] Risk-free rate (monthly): 0.003033  (3.64% p.a.)
+2026-03-27 00:03:40,754 | INFO |   Saved expected_returns.csv  (86 rows, most recent: 2026-02-01)
+2026-03-27 00:03:40,754 | INFO | [00:00:00] [7.1] Expected returns: spx=-0.0034  ndx=0.0136  gold=0.0126
+2026-03-27 00:03:40,756 | INFO |   Saved covariance_matrix.csv  (window=36 months, shrinkage=0.1297)
+2026-03-27 00:03:40,756 | INFO | [00:00:00] [7.2] Covariance matrix computed (Ledoit-Wolf shrinkage, 36-month window)
+2026-03-27 00:03:40,759 | INFO |   Saved portfolio_weights.csv  (optimiser: Optimization terminated successfully)
+2026-03-27 00:03:40,759 | INFO | [00:00:00] [7.3] Optimised weights: spx=0.0000  ndx=0.0093  gold=0.3907  btc=0.6000
+2026-03-27 00:03:40,761 | INFO |   Saved portfolio_weights_regime_adjusted.csv
+2026-03-27 00:03:40,761 | INFO | [00:00:00] [7.4] Regime=credit_stress (conf=1.00)  Adjusted: spx=0.0000  ndx=0.0000  gold=0.5352  btc=0.4648
+2026-03-27 00:03:40,797 | INFO |   Saved stress_test_results.csv  (20 scenarios)
+2026-03-27 00:03:40,797 | INFO | [00:00:00] [7.5] Stress tests complete: 20 scenarios
+2026-03-27 00:03:40,798 | INFO |   Saved portfolio_metrics.json
+2026-03-27 00:03:40,799 | INFO | [00:00:00] [7.6] Sharpe=4.421  VaR95=-0.1207  MaxDD=-0.5968
+2026-03-27 00:03:40,799 | INFO | [00:00:00] [END] Phase 7 completed successfully
+2026-03-27 00:03:40,799 | INFO | [PIPELINE] Phase 7 completed successfully
+2026-03-27 00:03:40,799 | INFO | DAILY JOB done
+2026-03-27 00:03:40,799 | INFO | ============================================================
+2026-03-27 00:03:40,799 | INFO | MONTHLY JOB starting
+2026-03-27 00:03:40,799 | WARNING | [MONTHLY] FRED_API_KEY not set — skipping monthly macro update. Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html and set it as environment variable FRED_API_KEY.
+2026-03-27 00:03:40,809 | INFO | MONTHLY JOB done
+2026-03-27 00:03:40,809 | INFO | Startup fetch complete. Scheduler now running.
+Traceback (most recent call last):
+  File "D:\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\backend\run_scheduler.py", line 117, in <module>
+    setup_schedule()
+    ~~~~~~~~~~~~~~^^
+  File "D:\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\backend\run_scheduler.py", line 90, in setup_schedule
+    schedule.every().month.do(job_monthly)
+    ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Job' object has no attribute 'month'
+2026-03-27 00:04:26,779 | INFO | ============================================================
+2026-03-27 00:04:26,779 | INFO | Live Data Scheduler starting
+2026-03-27 00:04:26,779 | INFO | Backend root: D:\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\backend
+2026-03-27 00:04:26,779 | INFO | ============================================================
+2026-03-27 00:04:26,780 | INFO | Running startup data fetch (all frequencies)...
+2026-03-27 00:04:26,780 | INFO | ============================================================
+2026-03-27 00:04:26,780 | INFO | HOURLY JOB starting
+2026-03-27 00:04:26,780 | INFO | [HOURLY] Fetching live prices from Yahoo Finance...
+2026-03-27 00:04:27,025 | INFO |   SPX         6477.11  (-0.15%)
+2026-03-27 00:04:27,088 | INFO |   NDX        23599.40  (-0.18%)
+2026-03-27 00:04:27,150 | INFO |   GOLD        4399.40  (-0.16%)
+2026-03-27 00:04:27,209 | INFO |   BTC        68745.90  (-0.52%)
+2026-03-27 00:04:27,273 | INFO |   VIX           27.40  (-2.77%)
+2026-03-27 00:04:27,274 | INFO | [HOURLY] Done — saved 5 prices.
+2026-03-27 00:04:27,274 | INFO | HOURLY JOB done
+2026-03-27 00:04:27,274 | INFO | ============================================================
+2026-03-27 00:04:27,274 | INFO | DAILY JOB starting
+2026-03-27 00:04:27,274 | INFO | [DAILY] Fetching daily market data from Yahoo Finance...
+2026-03-27 00:04:27,331 | INFO |   spx        latest=6477.1602
+2026-03-27 00:04:27,372 | INFO |   ndx        latest=23586.9941
+2026-03-27 00:04:27,413 | INFO |   gold       latest=4399.3999
+2026-03-27 00:04:27,456 | INFO |   btc        latest=68745.8984
+2026-03-27 00:04:27,504 | INFO |   vix        latest=27.4400
+2026-03-27 00:04:27,552 | INFO |   us10y      latest=4.4160
+2026-03-27 00:04:27,593 | INFO |   us2y       latest=4.0950
+2026-03-27 00:04:27,635 | INFO |   dxy        latest=99.8770
+2026-03-27 00:04:27,674 | INFO |   eurusd     latest=1.1542
+2026-03-27 00:04:27,722 | INFO |   gbpusd     latest=1.3340
+2026-03-27 00:04:27,801 | INFO |   qqq        latest=573.7900
+2026-03-27 00:04:27,810 | INFO | [DAILY] Still same month as last feature row — skipping append.
+2026-03-27 00:04:27,820 | INFO | [PIPELINE] Running Phase 7 (portfolio construction)...
+2026-03-27 00:04:28,289 | INFO | [00:00:00] [START] Phase 7 started
+2026-03-27 00:04:28,289 | INFO | [00:00:00] [LOAD] Loading Phase 3/5/6 outputs
+2026-03-27 00:04:28,299 | INFO | [00:00:00] [LOAD] Features: (278, 41)  Regimes: (278, 44)  Phase6 metrics: ['btc', 'spx', 'ndx', 'gold']
+2026-03-27 00:04:28,299 | INFO | [00:00:00] [INFO] Risk-free rate (monthly): 0.003033  (3.64% p.a.)
+2026-03-27 00:04:28,318 | INFO |   Saved expected_returns.csv  (86 rows, most recent: 2026-02-01)
+2026-03-27 00:04:28,318 | INFO | [00:00:00] [7.1] Expected returns: spx=-0.0034  ndx=0.0136  gold=0.0126
+2026-03-27 00:04:28,320 | INFO |   Saved covariance_matrix.csv  (window=36 months, shrinkage=0.1297)
+2026-03-27 00:04:28,320 | INFO | [00:00:00] [7.2] Covariance matrix computed (Ledoit-Wolf shrinkage, 36-month window)
+2026-03-27 00:04:28,322 | INFO |   Saved portfolio_weights.csv  (optimiser: Optimization terminated successfully)
+2026-03-27 00:04:28,323 | INFO | [00:00:00] [7.3] Optimised weights: spx=0.0000  ndx=0.0093  gold=0.3907  btc=0.6000
+2026-03-27 00:04:28,324 | INFO |   Saved portfolio_weights_regime_adjusted.csv
+2026-03-27 00:04:28,324 | INFO | [00:00:00] [7.4] Regime=credit_stress (conf=1.00)  Adjusted: spx=0.0000  ndx=0.0000  gold=0.5352  btc=0.4648
+2026-03-27 00:04:28,352 | INFO |   Saved stress_test_results.csv  (20 scenarios)
+2026-03-27 00:04:28,352 | INFO | [00:00:00] [7.5] Stress tests complete: 20 scenarios
+2026-03-27 00:04:28,353 | INFO |   Saved portfolio_metrics.json
+2026-03-27 00:04:28,353 | INFO | [00:00:00] [7.6] Sharpe=4.421  VaR95=-0.1207  MaxDD=-0.5968
+2026-03-27 00:04:28,353 | INFO | [00:00:00] [END] Phase 7 completed successfully
+2026-03-27 00:04:28,353 | INFO | [PIPELINE] Phase 7 completed successfully
+2026-03-27 00:04:28,353 | INFO | DAILY JOB done
+2026-03-27 00:04:28,353 | INFO | ============================================================
+2026-03-27 00:04:28,353 | INFO | MONTHLY JOB starting
+2026-03-27 00:04:28,353 | WARNING | [MONTHLY] FRED_API_KEY not set — skipping monthly macro update. Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html and set it as environment variable FRED_API_KEY.
+2026-03-27 00:04:28,372 | INFO | MONTHLY JOB done
+2026-03-27 00:04:28,372 | INFO | Startup fetch complete. Scheduler now running.
+2026-03-27 00:04:28,372 | INFO | Schedule configured:
+2026-03-27 00:04:28,372 | INFO |   Hourly  : every hour at :00  — Yahoo Finance prices
+2026-03-27 00:04:28,372 | INFO |   Daily   : 22:00 UTC           — Yahoo Finance full market data + Phase 7
+2026-03-27 00:04:28,372 | INFO |   Monthly : 1st of month 08:00  — FRED macro data + Phase 5 + Phase 7
+2026-03-27 00:04:28,372 | INFO | Entering scheduler loop. Press Ctrl+C to stop.
+D:\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\backend\run_scheduler.py:132: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now = datetime.utcnow()
+2026-03-27 00:05:19,538 | INFO | ============================================================
+2026-03-27 00:05:19,539 | INFO | Live Data Scheduler starting
+2026-03-27 00:05:19,539 | INFO | Backend root: D:\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\backend
+2026-03-27 00:05:19,539 | INFO | ============================================================
+2026-03-27 00:05:19,539 | INFO | Running startup data fetch (all frequencies)...
+2026-03-27 00:05:19,539 | INFO | ============================================================
+2026-03-27 00:05:19,539 | INFO | HOURLY JOB starting
+2026-03-27 00:05:19,539 | INFO | [HOURLY] Fetching live prices from Yahoo Finance...
+2026-03-27 00:05:19,815 | INFO |   SPX         6477.11  (-0.15%)
+2026-03-27 00:05:19,874 | INFO |   NDX        23599.40  (-0.18%)
+2026-03-27 00:05:19,943 | INFO |   GOLD        4399.50  (-0.16%)
+2026-03-27 00:05:19,995 | INFO |   BTC        68745.90  (-0.52%)
+2026-03-27 00:05:20,044 | INFO |   VIX           27.40  (-2.77%)
+2026-03-27 00:05:20,053 | INFO | [HOURLY] Done — saved 5 prices.
+2026-03-27 00:05:20,053 | INFO | HOURLY JOB done
+2026-03-27 00:05:20,053 | INFO | ============================================================
+2026-03-27 00:05:20,053 | INFO | DAILY JOB starting
+2026-03-27 00:05:20,053 | INFO | [DAILY] Fetching daily market data from Yahoo Finance...
+2026-03-27 00:05:20,091 | INFO |   spx        latest=6477.1602
+2026-03-27 00:05:20,146 | INFO |   ndx        latest=23586.9941
+2026-03-27 00:05:20,191 | INFO |   gold       latest=4399.5000
+2026-03-27 00:05:20,234 | INFO |   btc        latest=68745.8984
+2026-03-27 00:05:20,275 | INFO |   vix        latest=27.4400
+2026-03-27 00:05:20,316 | INFO |   us10y      latest=4.4160
+2026-03-27 00:05:20,367 | INFO |   us2y       latest=4.0950
+2026-03-27 00:05:20,421 | INFO |   dxy        latest=99.8800
+2026-03-27 00:05:20,505 | INFO |   eurusd     latest=1.1541
+2026-03-27 00:05:20,551 | INFO |   gbpusd     latest=1.3339
+2026-03-27 00:05:20,620 | INFO |   qqq        latest=573.7900
+2026-03-27 00:05:20,624 | INFO | [DAILY] Still same month as last feature row — skipping append.
+2026-03-27 00:05:20,630 | INFO | [PIPELINE] Running Phase 7 (portfolio construction)...
+2026-03-27 00:05:21,075 | INFO | [00:00:00] [START] Phase 7 started
+2026-03-27 00:05:21,075 | INFO | [00:00:00] [LOAD] Loading Phase 3/5/6 outputs
+2026-03-27 00:05:21,085 | INFO | [00:00:00] [LOAD] Features: (278, 41)  Regimes: (278, 44)  Phase6 metrics: ['btc', 'spx', 'ndx', 'gold']
+2026-03-27 00:05:21,085 | INFO | [00:00:00] [INFO] Risk-free rate (monthly): 0.003033  (3.64% p.a.)
+2026-03-27 00:05:21,104 | INFO |   Saved expected_returns.csv  (86 rows, most recent: 2026-02-01)
+2026-03-27 00:05:21,104 | INFO | [00:00:00] [7.1] Expected returns: spx=-0.0034  ndx=0.0136  gold=0.0126
+2026-03-27 00:05:21,106 | INFO |   Saved covariance_matrix.csv  (window=36 months, shrinkage=0.1297)
+2026-03-27 00:05:21,106 | INFO | [00:00:00] [7.2] Covariance matrix computed (Ledoit-Wolf shrinkage, 36-month window)
+2026-03-27 00:05:21,109 | INFO |   Saved portfolio_weights.csv  (optimiser: Optimization terminated successfully)
+2026-03-27 00:05:21,109 | INFO | [00:00:00] [7.3] Optimised weights: spx=0.0000  ndx=0.0093  gold=0.3907  btc=0.6000
+2026-03-27 00:05:21,111 | INFO |   Saved portfolio_weights_regime_adjusted.csv
+2026-03-27 00:05:21,111 | INFO | [00:00:00] [7.4] Regime=credit_stress (conf=1.00)  Adjusted: spx=0.0000  ndx=0.0000  gold=0.5352  btc=0.4648
+2026-03-27 00:05:21,140 | INFO |   Saved stress_test_results.csv  (20 scenarios)
+2026-03-27 00:05:21,140 | INFO | [00:00:00] [7.5] Stress tests complete: 20 scenarios
+2026-03-27 00:05:21,141 | INFO |   Saved portfolio_metrics.json
+2026-03-27 00:05:21,141 | INFO | [00:00:00] [7.6] Sharpe=4.421  VaR95=-0.1207  MaxDD=-0.5968
+2026-03-27 00:05:21,141 | INFO | [00:00:00] [END] Phase 7 completed successfully
+2026-03-27 00:05:21,141 | INFO | [PIPELINE] Phase 7 completed successfully
+2026-03-27 00:05:21,141 | INFO | DAILY JOB done
+2026-03-27 00:05:21,141 | INFO | ============================================================
+2026-03-27 00:05:21,141 | INFO | MONTHLY JOB starting
+2026-03-27 00:05:21,141 | WARNING | [MONTHLY] FRED_API_KEY not set — skipping monthly macro update. Get a free key at https://fred.stlouisfed.org/docs/api/api_key.html and set it as environment variable FRED_API_KEY.
+2026-03-27 00:05:21,155 | INFO | MONTHLY JOB done
+2026-03-27 00:05:21,155 | INFO | Startup fetch complete. Scheduler now running.
+2026-03-27 00:05:21,155 | INFO | Schedule configured:
+2026-03-27 00:05:21,155 | INFO |   Hourly  : every hour at :00  — Yahoo Finance prices
+2026-03-27 00:05:21,156 | INFO |   Daily   : 22:00 UTC           — Yahoo Finance full market data + Phase 7
+2026-03-27 00:05:21,156 | INFO |   Monthly : 1st of month 08:00  — FRED macro data + Phase 5 + Phase 7
+2026-03-27 00:05:21,156 | INFO | Entering scheduler loop. Press Ctrl+C to stop.
+D:\ML-Powered Portfolio Stress Testing Tool with Macroeconomic Scenario Analysis and Market Risk Modelling\backend\run_scheduler.py:132: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  now = datetime.utcnow()

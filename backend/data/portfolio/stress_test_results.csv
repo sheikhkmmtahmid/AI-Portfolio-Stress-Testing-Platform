@@ -1,0 +1,21 @@
+stress_type,scenario,start_date,end_date,n_months,spx_total_return,ndx_total_return,gold_total_return,portfolio_total_return,portfolio_mean_monthly_ret,portfolio_annualised_vol,portfolio_max_drawdown,portfolio_var_95_monthly,portfolio_cvar_95_monthly,scenario_description
+historical,gfc_peak,2008-09-01,2009-03-01,7,-0.40396891358237597,-0.36973566356482834,0.07670305807234468,0.048807,0.008061,0.16889,-0.098863,,,
+historical,gfc_recovery,2009-03-01,2009-12-01,10,0.4962952131220404,0.6316400152532218,0.14656018157416417,0.080785,0.008305,0.111006,-0.038546,,,
+historical,euro_crisis,2011-07-01,2012-07-01,13,0.02884542286891656,0.11691270901427586,0.04060803607227381,-0.328045,-0.019026,0.491657,-0.552187,,,
+historical,covid_crash,2020-02-01,2020-04-01,3,-0.11541491728815667,-0.013336131824467246,0.060596825955926414,-0.027485,-0.000796,0.457176,-0.137853,,,
+historical,covid_recovery,2020-04-01,2020-12-01,9,0.42723302464162916,0.6026227821143166,0.1903202337995744,1.063109,0.087485,0.310863,-0.057485,,,
+historical,inflation_spike_22,2022-01-01,2022-12-01,12,-0.21589056463932976,-0.35865865784741124,-0.010967956558162517,-0.422356,-0.040492,0.30837,-0.443256,,,
+regime_shock,regime_calm,2003-04-01,2016-11-01,77,0.013717770411212544,0.017746917112174774,0.0005274357317504523,4.118875,0.053492,0.560366,-0.543958,-0.120088,-0.172825,
+regime_shock,regime_inflation_stress,2004-06-01,2026-01-01,103,0.013906042786982544,0.016741236745104644,0.013865961889765025,2.434289,0.023634,0.277338,-0.276694,-0.117277,-0.12601,
+regime_shock,regime_credit_stress,2007-07-01,2026-03-01,56,0.007334049195690452,0.014875853419428887,0.013857460885053503,1.584019,0.028286,0.306268,-0.389477,-0.091045,-0.154258,
+regime_shock,regime_crisis,2003-02-01,2022-12-01,42,-0.02044099861134761,-0.01731866143697149,0.005701877563053897,-0.379997,-0.009048,0.405731,-0.722539,-0.148259,-0.237554,
+macro_scenario,baseline,,,278,0.0,0.0,0.0,0.0,0.0,,,,,No shock applied. Control scenario.
+macro_scenario,rates_up_100bps,,,278,-0.01,-0.01,-0.003,-0.001605,-6e-06,,,,,Parallel +100 bps shock to US 2Y and US 10Y yields.
+macro_scenario,inflation_up_100bps,,,278,-0.006,-0.006,0.005,0.002676,1e-05,,,,,US inflation shock of +1 percentage point YoY.
+macro_scenario,vix_spike_10pt,,,278,-0.015,-0.015,0.002,0.00107,4e-06,,,,,Volatility shock with VIX rising by 10 points.
+macro_scenario,credit_spread_widening_200bps,,,278,-0.012,-0.012,0.003,0.001605,6e-06,,,,,High-yield spread widening by 200 bps.
+macro_scenario,hawkish_policy_shock,,,278,-0.0235,-0.0235,0.0023,0.001231,4e-06,,,,,"Correlated hawkish shock: higher yields, higher inflation, moderately higher VIX, wider spreads."
+macro_scenario,stagflation_regime,,,278,-0.03,-0.03,0.02135,0.011426,4.1e-05,,,,,"Higher inflation, wider spreads, higher volatility, weaker equities, supportive gold."
+macro_scenario,disinflation_growth_scare,,,278,-0.0195,-0.0195,0.005,0.002676,1e-05,,,,,"Lower inflation, lower yields, weaker growth, weaker equities, mild gold support."
+macro_scenario,systemic_crisis,,,278,-0.078,-0.078,0.0185,0.0099,3.6e-05,,,,,"Severe risk-off crisis with spread widening, volatility spike, large drawdowns, gold support."
+macro_scenario,usd_dollar_squeeze,,,278,-0.01,-0.01,-0.005,-0.002676,-1e-05,,,,,"Dollar strength regime with weaker EUR/USD and GBP/USD, weaker risk assets, higher stress."

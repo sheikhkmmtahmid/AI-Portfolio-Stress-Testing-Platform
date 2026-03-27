@@ -1,0 +1,167 @@
+{
+  "prices": {
+    "spx": {
+      "ticker": "^GSPC",
+      "price": 6367.77,
+      "prev_close": 6373.29,
+      "day_return": -0.000866,
+      "day_pct": -0.087,
+      "as_of": "2026-03-27T15:30:00-04:00"
+    },
+    "ndx": {
+      "ticker": "^NDX",
+      "price": 23136.4883,
+      "prev_close": 23147.7715,
+      "day_return": -0.000487,
+      "day_pct": -0.049,
+      "as_of": "2026-03-27T15:30:00-04:00"
+    },
+    "gold": {
+      "ticker": "GC=F",
+      "price": 4521.2998,
+      "prev_close": 4543.1001,
+      "day_return": -0.004799,
+      "day_pct": -0.48,
+      "as_of": "2026-03-27T16:00:00-04:00"
+    },
+    "btc": {
+      "ticker": "BTC-USD",
+      "price": 66030.1406,
+      "prev_close": 65980.7891,
+      "day_return": 0.000748,
+      "day_pct": 0.075,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "vix": {
+      "ticker": "^VIX",
+      "price": 31.06,
+      "prev_close": 30.75,
+      "day_return": 0.010081,
+      "day_pct": 1.008,
+      "as_of": "2026-03-27T15:00:00-05:00"
+    },
+    "eurusd": {
+      "ticker": "EURUSD=X",
+      "price": 1.151,
+      "prev_close": 1.1511,
+      "day_return": -0.000115,
+      "day_pct": -0.012,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "gbpusd": {
+      "ticker": "GBPUSD=X",
+      "price": 1.326,
+      "prev_close": 1.3261,
+      "day_return": -4.9e-05,
+      "day_pct": -0.005,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "dxy": {
+      "ticker": "DX-Y.NYB",
+      "price": 100.193,
+      "prev_close": 100.117,
+      "day_return": 0.000759,
+      "day_pct": 0.076,
+      "as_of": "2026-03-27T16:00:00-04:00"
+    },
+    "usdjpy": {
+      "ticker": "JPY=X",
+      "price": 160.286,
+      "prev_close": 160.14,
+      "day_return": 0.000912,
+      "day_pct": 0.091,
+      "as_of": "2026-03-27T20:00:00+00:00"
+    },
+    "usdchf": {
+      "ticker": "CHF=X",
+      "price": 0.7984,
+      "prev_close": 0.7987,
+      "day_return": -0.000388,
+      "day_pct": -0.039,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "audusd": {
+      "ticker": "AUDUSD=X",
+      "price": 0.6873,
+      "prev_close": 0.6876,
+      "day_return": -0.000378,
+      "day_pct": -0.038,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "usdcad": {
+      "ticker": "CAD=X",
+      "price": 1.3892,
+      "prev_close": 1.3892,
+      "day_return": -1.4e-05,
+      "day_pct": -0.001,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "nzdusd": {
+      "ticker": "NZDUSD=X",
+      "price": 0.5747,
+      "prev_close": 0.5747,
+      "day_return": -5.7e-05,
+      "day_pct": -0.006,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "usdcny": {
+      "ticker": "CNY=X",
+      "price": 6.9111,
+      "prev_close": 6.9111,
+      "day_return": 0.0,
+      "day_pct": 0.0,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "usdsek": {
+      "ticker": "SEK=X",
+      "price": 9.4672,
+      "prev_close": 9.4616,
+      "day_return": 0.000586,
+      "day_pct": 0.059,
+      "as_of": "2026-03-27T20:00:00+00:00"
+    },
+    "usdnok": {
+      "ticker": "NOK=X",
+      "price": 9.7254,
+      "prev_close": 9.7416,
+      "day_return": -0.001663,
+      "day_pct": -0.166,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "usdbdt": {
+      "ticker": "BDT=X",
+      "price": 122.52,
+      "prev_close": 122.52,
+      "day_return": 0.0,
+      "day_pct": 0.0,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "gbpbdt": {
+      "ticker": "GBPBDT=X",
+      "price": 162.609,
+      "prev_close": 162.711,
+      "day_return": -0.000627,
+      "day_pct": -0.063,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "eurbdt": {
+      "ticker": "EURBDT=X",
+      "price": 141.121,
+      "prev_close": 141.189,
+      "day_return": -0.000482,
+      "day_pct": -0.048,
+      "as_of": "2026-03-27T21:00:00+00:00"
+    },
+    "goldbdt": {
+      "ticker": "GC=F \u00d7 BDT=X",
+      "price": 553949.65,
+      "prev_close": 556620.62,
+      "day_return": -0.004799,
+      "day_pct": -0.48,
+      "as_of": "2026-03-27T16:00:00-04:00"
+    }
+  },
+  "fetched_at": "2026-03-27T22:00:13.714801",
+  "source": "Yahoo Finance (yfinance)",
+  "frequency": "hourly"
+}

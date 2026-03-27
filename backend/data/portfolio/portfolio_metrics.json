@@ -1,0 +1,40 @@
+{
+  "as_of_date": "2026-03-27",
+  "assets": [
+    "spx",
+    "ndx",
+    "gold",
+    "btc"
+  ],
+  "weights": {
+    "spx": 0.0,
+    "ndx": 0.0,
+    "gold": 0.535152,
+    "btc": 0.464848
+  },
+  "expected_return_monthly": 0.079868,
+  "volatility_monthly": 0.0602,
+  "sharpe_ratio_monthly": 1.276308,
+  "var_95_monthly": -0.120681,
+  "cvar_95_monthly": -0.174835,
+  "expected_return_annual": 0.958411,
+  "volatility_annual": 0.20854,
+  "sharpe_ratio": 4.42126,
+  "var_95_annual": -0.418051,
+  "max_drawdown": -0.596791,
+  "diversification_ratio": 1.403489,
+  "risk_free_rate_monthly": 0.003033,
+  "risk_free_rate_annual": 0.0364,
+  "asset_expected_returns_annual": {
+    "spx": -0.041222,
+    "ndx": 0.163415,
+    "gold": 0.151214,
+    "btc": 1.887692
+  },
+  "asset_volatilities_annual": {
+    "spx": 0.140698,
+    "ndx": 0.160327,
+    "gold": 0.189965,
+    "btc": 0.410939
+  }
+}

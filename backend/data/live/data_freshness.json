@@ -1,0 +1,17 @@
+{
+  "hourly": {
+    "last_updated": "2026-03-27T22:00:13.718942",
+    "status": "ok",
+    "detail": "Fetched 20 assets \u2014 22:00 UTC"
+  },
+  "daily": {
+    "last_updated": "2026-03-27T22:00:15.292314",
+    "status": "ok",
+    "detail": "Prices updated, no new monthly row yet \u2014 2026-03-27"
+  },
+  "monthly": {
+    "last_updated": "2026-03-27T17:21:34.819125",
+    "status": "ok",
+    "detail": "FRED sync complete \u2014 0 new rows \u2014 2026-03-27"
+  }
+}
