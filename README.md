@@ -3,6 +3,7 @@
 > **Academic Title:** An Explainable AI Framework for Portfolio Stress Testing Using Macroeconomic Scenario Analysis, Factor Decomposition, and Unsupervised Market Regime Detection
 
 > **Platform Name:** AI Portfolio Stress Testing Platform
+
 > **Built by** [SKMMT](https://skmmt.rootexception.com/)
 
 ---
